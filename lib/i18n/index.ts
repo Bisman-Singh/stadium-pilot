@@ -1,12 +1,21 @@
-import { DEFAULT_LOCALE, RTL_LOCALES, type Locale } from "../constants";
-import { en, type Dictionary, type DictKey } from "./en";
-import { es } from "./es";
-import { fr } from "./fr";
-import { ar } from "./ar";
+import { RTL_LOCALES, SUPPORTED_LOCALES, type Locale } from "../constants";
+import { must } from "../must";
+import { TRANSLATIONS, type Dictionary, type DictKey } from "./translations";
 
 export type { Dictionary, DictKey };
 
-const DICTIONARIES: Record<Locale, Dictionary> = { en, es, fr, ar };
+/** One flat dictionary per locale, materialised once from the keyed source. */
+function dictionaryFor(locale: Locale): Dictionary {
+  // Object.fromEntries widens keys to string; the shape is guaranteed by the
+  // `satisfies` clause on TRANSLATIONS, so this narrows it back losslessly.
+  return Object.fromEntries(
+    Object.entries(TRANSLATIONS).map(([key, byLocale]) => [key, byLocale[locale]]),
+  ) as Dictionary;
+}
+
+const DICTIONARIES = new Map<Locale, Dictionary>(
+  SUPPORTED_LOCALES.map((locale) => [locale, dictionaryFor(locale)]),
+);
 
 /** Native-language display names for the locale switcher. */
 export const LOCALE_LABELS: Record<Locale, string> = {
@@ -16,9 +25,9 @@ export const LOCALE_LABELS: Record<Locale, string> = {
   ar: "العربية",
 };
 
-/** The full UI dictionary for a locale, falling back to the default. */
+/** The full UI dictionary for a locale. */
 export function getDictionary(locale: Locale): Dictionary {
-  return DICTIONARIES[locale] ?? DICTIONARIES[DEFAULT_LOCALE];
+  return must(DICTIONARIES.get(locale), `dictionary for ${locale}`);
 }
 
 /** Whether the locale is written right-to-left. */

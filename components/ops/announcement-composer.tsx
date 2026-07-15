@@ -3,6 +3,7 @@
 import { useState, type FormEvent } from "react";
 import { SUPPORTED_LOCALES, type Locale } from "@/lib/constants";
 import { LOCALE_LABELS } from "@/lib/i18n";
+import { OpsPanel } from "./panel";
 
 interface AnnouncementItem {
   language: string;
@@ -47,11 +48,7 @@ export function AnnouncementComposer() {
   };
 
   return (
-    <section
-      aria-label="Multilingual announcement composer"
-      className="rounded-xl border border-line bg-surface p-4"
-    >
-      <h2 className="text-lg font-semibold">Multilingual PA announcement</h2>
+    <OpsPanel title="Multilingual PA announcement" ariaLabel="Multilingual announcement composer">
       <form onSubmit={submit} className="mt-3 space-y-3">
         <label className="block text-sm">
           <span className="text-muted">Topic</span>
@@ -102,7 +99,7 @@ export function AnnouncementComposer() {
         <button
           type="submit"
           disabled={loading || topic.trim().length < 3 || languages.length === 0}
-          className="rounded-lg bg-accent px-4 py-2 font-semibold text-accent-ink disabled:opacity-50"
+          className="rounded-lg bg-accent px-4 py-2 font-semibold text-accent-ink disabled:bg-line disabled:text-muted"
         >
           {loading ? "Drafting…" : "Draft announcement"}
         </button>
@@ -126,6 +123,6 @@ export function AnnouncementComposer() {
           ))}
         </ul>
       )}
-    </section>
+    </OpsPanel>
   );
 }

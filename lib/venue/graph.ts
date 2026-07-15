@@ -84,47 +84,26 @@ export function findRoute(
   }
 
   const adjacency = buildAdjacency(zones, stepFree);
-  const distance = new Map<string, number>();
-  const previous = new Map<string, { node: string; edge: Adjacent }>();
-  const visited = new Set<string>();
-  for (const zone of zones) distance.set(zone.id, Infinity);
-  distance.set(fromId, 0);
+  const state: SearchState = {
+    distance: new Map<string, number>(),
+    previous: new Map<string, Predecessor>(),
+    visited: new Set<string>(),
+  };
+  for (const zone of zones) state.distance.set(zone.id, Infinity);
+  state.distance.set(fromId, 0);
 
-  while (visited.size < zones.length) {
-    let current: string | null = null;
-    let best = Infinity;
-    for (const [node, dist] of distance) {
-      if (!visited.has(node) && dist < best) {
-        best = dist;
-        current = node;
-      }
-    }
-    if (current === null || best === Infinity) break;
-    if (current === toId) break;
-    visited.add(current);
-
-    // `current` and every `edge.to` are zone ids seeded into both maps at setup.
-    for (const edge of must(adjacency.get(current), "adjacency list")) {
-      if (visited.has(edge.to)) continue;
-      const candidate = best + edge.metres;
-      if (candidate < must(distance.get(edge.to), "edge distance")) {
-        distance.set(edge.to, candidate);
-        previous.set(edge.to, { node: current, edge });
-      }
-    }
+  while (state.visited.size < zones.length) {
+    const nearest = nearestUnvisited(state);
+    if (nearest === null) break; // every reachable node is settled
+    if (nearest.node === toId) break;
+    state.visited.add(nearest.node);
+    // `nearest.node` and every `edge.to` are zone ids seeded into the maps at setup.
+    relaxNeighbours(nearest, must(adjacency.get(nearest.node), "adjacency list"), state);
   }
 
-  if (must(distance.get(toId), "target distance") === Infinity) return null;
+  if (must(state.distance.get(toId), "target distance") === Infinity) return null;
 
-  const steps: RouteStep[] = [];
-  let cursor = toId;
-  while (cursor !== fromId) {
-    // A finite distance to `toId` guarantees a predecessor chain back to `fromId`.
-    const step = must(previous.get(cursor), "predecessor");
-    steps.unshift({ from: step.node, to: cursor, kind: step.edge.kind, metres: step.edge.metres });
-    cursor = step.node;
-  }
-
+  const steps = reconstructSteps(state.previous, fromId, toId);
   const totalMetres = steps.reduce((sum, step) => sum + step.metres, 0);
   return {
     from: fromId,
@@ -134,4 +113,65 @@ export function findRoute(
     estMinutes: estimateMinutes(steps),
     stepFree,
   };
+}
+
+interface Predecessor {
+  node: string;
+  edge: Adjacent;
+}
+
+interface SearchState {
+  distance: Map<string, number>;
+  previous: Map<string, Predecessor>;
+  visited: Set<string>;
+}
+
+/**
+ * The unvisited node with the smallest finite tentative distance, or null when
+ * every remaining node is unreachable. A returned node always carries a finite
+ * distance, because Infinity can never win the `<` comparison.
+ */
+function nearestUnvisited(state: SearchState): { node: string; dist: number } | null {
+  let node: string | null = null;
+  let dist = Infinity;
+  for (const [candidate, candidateDist] of state.distance) {
+    if (!state.visited.has(candidate) && candidateDist < dist) {
+      dist = candidateDist;
+      node = candidate;
+    }
+  }
+  return node === null ? null : { node, dist };
+}
+
+/** Standard Dijkstra relaxation of one settled node's outgoing edges. */
+function relaxNeighbours(
+  from: { node: string; dist: number },
+  edges: Adjacent[],
+  state: SearchState,
+): void {
+  for (const edge of edges) {
+    if (state.visited.has(edge.to)) continue;
+    const candidate = from.dist + edge.metres;
+    if (candidate < must(state.distance.get(edge.to), "edge distance")) {
+      state.distance.set(edge.to, candidate);
+      state.previous.set(edge.to, { node: from.node, edge });
+    }
+  }
+}
+
+/** Walks the predecessor chain back from `toId` to `fromId` in step order. */
+function reconstructSteps(
+  previous: Map<string, Predecessor>,
+  fromId: string,
+  toId: string,
+): RouteStep[] {
+  const steps: RouteStep[] = [];
+  let cursor = toId;
+  while (cursor !== fromId) {
+    // A finite distance to `toId` guarantees a predecessor chain back to `fromId`.
+    const step = must(previous.get(cursor), "predecessor");
+    steps.unshift({ from: step.node, to: cursor, kind: step.edge.kind, metres: step.edge.metres });
+    cursor = step.node;
+  }
+  return steps;
 }

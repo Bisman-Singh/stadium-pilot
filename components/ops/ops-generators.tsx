@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { VENUE } from "@/lib/venue";
 import { MarkdownLite } from "@/components/markdown-lite";
+import { OpsPanel } from "./panel";
 
 const SHIFTS = ["pre-match", "first-half", "halftime", "second-half", "egress"] as const;
 
@@ -27,8 +28,8 @@ export function OpsGenerators({ minute }: { minute: number }) {
         body: JSON.stringify({ gateId, shift }),
       });
       if (!res.ok) throw new Error("briefing failed");
-      const json = await res.json();
-      setBriefing(json.briefing as string);
+      const json: { briefing?: string } = await res.json();
+      setBriefing(json.briefing ?? "");
     } catch {
       setBriefingFailed(true);
     } finally {
@@ -46,8 +47,8 @@ export function OpsGenerators({ minute }: { minute: number }) {
         body: JSON.stringify({ upToMinute: Math.round(minute) }),
       });
       if (!res.ok) throw new Error("report failed");
-      const json = await res.json();
-      setReport(json.report as string);
+      const json: { report?: string } = await res.json();
+      setReport(json.report ?? "");
     } catch {
       setReportFailed(true);
     } finally {
@@ -67,11 +68,7 @@ export function OpsGenerators({ minute }: { minute: number }) {
 
   return (
     <div className="space-y-6">
-      <section
-        aria-label="Volunteer briefing generator"
-        className="rounded-xl border border-line bg-surface p-4"
-      >
-        <h2 className="text-lg font-semibold">Volunteer briefing</h2>
+      <OpsPanel title="Volunteer briefing" ariaLabel="Volunteer briefing generator">
         <div className="mt-3 flex flex-wrap gap-3">
           <label className="text-sm">
             <span className="text-muted">Gate</span>
@@ -91,7 +88,11 @@ export function OpsGenerators({ minute }: { minute: number }) {
             <span className="text-muted">Match phase</span>
             <select
               value={shift}
-              onChange={(event) => setShift(event.target.value as (typeof SHIFTS)[number])}
+              onChange={(event) => {
+                // The option list is built from SHIFTS, so this always matches.
+                const next = SHIFTS.find((s) => s === event.target.value);
+                if (next) setShift(next);
+              }}
               className="mt-1 block rounded-md border border-line bg-panel px-3 py-2 text-ink"
             >
               {SHIFTS.map((s) => (
@@ -106,7 +107,7 @@ export function OpsGenerators({ minute }: { minute: number }) {
           type="button"
           onClick={generateBriefing}
           disabled={briefingLoading}
-          className="mt-3 rounded-lg bg-accent px-4 py-2 font-semibold text-accent-ink disabled:opacity-50"
+          className="mt-3 rounded-lg bg-accent px-4 py-2 font-semibold text-accent-ink disabled:bg-line disabled:text-muted"
         >
           {briefingLoading ? "Generating…" : "Generate briefing"}
         </button>
@@ -120,13 +121,9 @@ export function OpsGenerators({ minute }: { minute: number }) {
             <MarkdownLite text={briefing} />
           </div>
         )}
-      </section>
+      </OpsPanel>
 
-      <section
-        aria-label="Match operations report"
-        className="rounded-xl border border-line bg-surface p-4"
-      >
-        <h2 className="text-lg font-semibold">Match operations report</h2>
+      <OpsPanel title="Match operations report" ariaLabel="Match operations report">
         <p className="mt-1 text-sm text-muted">
           Summarises the match up to minute {Math.round(minute)}.
         </p>
@@ -135,7 +132,7 @@ export function OpsGenerators({ minute }: { minute: number }) {
             type="button"
             onClick={generateReport}
             disabled={reportLoading}
-            className="rounded-lg bg-accent px-4 py-2 font-semibold text-accent-ink disabled:opacity-50"
+            className="rounded-lg bg-accent px-4 py-2 font-semibold text-accent-ink disabled:bg-line disabled:text-muted"
           >
             {reportLoading ? "Generating…" : "Generate report"}
           </button>
@@ -159,7 +156,7 @@ export function OpsGenerators({ minute }: { minute: number }) {
             <MarkdownLite text={report} />
           </div>
         )}
-      </section>
+      </OpsPanel>
     </div>
   );
 }

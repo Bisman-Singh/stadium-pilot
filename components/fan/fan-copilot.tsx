@@ -134,7 +134,7 @@ export function FanCopilot() {
           <button
             type="submit"
             disabled={!input.trim()}
-            className="rounded-lg bg-accent px-5 py-2.5 font-semibold text-accent-ink disabled:opacity-50"
+            className="rounded-lg bg-accent px-5 py-2.5 font-semibold text-accent-ink disabled:bg-line disabled:text-muted"
           >
             {dict.fanSend}
           </button>

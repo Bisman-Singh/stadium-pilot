@@ -63,7 +63,7 @@ describe("match phase curve invariants", () => {
 });
 
 describe("phaseAt boundaries", () => {
-  it.each([
+  it.each<[number, string]>([
     [0, "pre-gates"],
     [29, "pre-gates"],
     [30, "ingress"],
@@ -77,7 +77,7 @@ describe("phaseAt boundaries", () => {
     [140, "egress"],
     [150, "egress"],
   ])("minute %i is %s", (minute, phase) => {
-    expect(phaseAt(minute as number)).toBe(phase);
+    expect(phaseAt(minute)).toBe(phase);
   });
 });
 
