@@ -137,6 +137,16 @@ describe("location + gate resolution", () => {
     expect(resolveLocation("")).toBeUndefined();
   });
 
+  it("resolves gate names and ids to the zone the gate serves", () => {
+    expect(resolveLocation("Gate A")).toBe("N1");
+    expect(resolveLocation("gate f")).toBe("S1");
+    expect(resolveLocation("g")).toBe("PL");
+  });
+
+  it("matches a lowercase zone id via the exact-name comparison", () => {
+    expect(resolveLocation("cn")).toBe("CN");
+  });
+
   it("finds a gate serving a zone", () => {
     expect(gateForZone("N2")?.id).toBe("A");
     expect(gateForZone("TH")?.id).toBe("H");
