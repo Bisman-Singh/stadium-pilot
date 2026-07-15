@@ -3,5 +3,5 @@
   "config": {
     "MD013": false,
   },
-  "ignores": ["node_modules/**", "coverage/**", ".next/**"],
+  "ignores": ["node_modules/**", "coverage/**", ".next/**", "PLAN.md"],
 }

@@ -7,7 +7,7 @@ once. Fans get a multilingual copilot that answers "where, how long, how busy,
 how do I get out" in plain language. Organizers get a live operations center that
 turns crowd telemetry into ranked incidents and AI-drafted responses.
 
-**Live demo:** https://stadium.bisman.org
+**Live demo:** <https://stadium.bisman.org>
 **Personas:** [`/fan`](https://stadium.bisman.org/fan) (spectator copilot) and [`/ops`](https://stadium.bisman.org/ops) (operations center)
 
 > Unofficial demo. Not affiliated with FIFA or any real venue. Every stadium,
