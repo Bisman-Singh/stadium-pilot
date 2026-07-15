@@ -42,3 +42,6 @@ next-env.d.ts
 
 # claude local settings (may contain secrets)
 .claude/settings.local.json
+
+# internal planning notes (kept local)
+PLAN.md

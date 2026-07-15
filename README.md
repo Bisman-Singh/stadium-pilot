@@ -1,5 +1,7 @@
 # StadiumPilot
 
+[![CI](https://github.com/Bisman-Singh/stadium-pilot/actions/workflows/ci.yml/badge.svg)](https://github.com/Bisman-Singh/stadium-pilot/actions/workflows/ci.yml)
+
 A Generative-AI companion for World Cup 2026 match days. It serves two people at
 once. Fans get a multilingual copilot that answers "where, how long, how busy,
 how do I get out" in plain language. Organizers get a live operations center that
@@ -73,14 +75,14 @@ Generative AI is core to the product, not a bolt-on.
 
 ## Judging criteria, and where to verify each
 
-| Criterion | How it is addressed | Look at |
-|---|---|---|
-| **Problem alignment** | Two real match-day personas, both fully built and grounded in a venue model | `app/fan`, `app/ops`, `lib/venue` |
-| **Code quality** | Typed end to end, small pure modules, clear separation of core and AI, zero lint and type errors | `lib/`, `tsconfig.json`, `eslint.config.mjs` |
-| **Security** | CSP and security headers, same-origin checks, per-IP rate limiting, Zod validation, no stored data, no secrets in repo | `SECURITY.md`, `next.config.ts`, `lib/http.ts`, `lib/rate-limit.ts` |
-| **Efficiency** | No database, seeded O(1) simulation, Dijkstra on a small graph, LRU and TTL cache, capped tokens | `lib/sim`, `lib/venue/graph.ts`, `lib/cache.ts` |
-| **Testing** | 122 tests, **100% line, branch, function, and statement coverage** | `tests/`, `npm run test:coverage` |
-| **Accessibility** | Step-free routing as a first-class feature, WCAG-minded UI, ARIA live regions, RTL, automated axe tests | `components/`, `tests/components`, `lib/i18n` |
+| Criterion             | How it is addressed                                                                                                    | Look at                                                             |
+| --------------------- | ---------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------- |
+| **Problem alignment** | Two real match-day personas, both fully built and grounded in a venue model                                            | `app/fan`, `app/ops`, `lib/venue`                                   |
+| **Code quality**      | Typed end to end, small pure modules, clear separation of core and AI, zero lint and type errors                       | `lib/`, `tsconfig.json`, `eslint.config.mjs`                        |
+| **Security**          | CSP and security headers, same-origin checks, per-IP rate limiting, Zod validation, no stored data, no secrets in repo | `SECURITY.md`, `next.config.ts`, `lib/http.ts`, `lib/rate-limit.ts` |
+| **Efficiency**        | No database, seeded O(1) simulation, Dijkstra on a small graph, LRU and TTL cache, capped tokens                       | `lib/sim`, `lib/venue/graph.ts`, `lib/cache.ts`                     |
+| **Testing**           | 122 tests, **100% line, branch, function, and statement coverage**                                                     | `tests/`, `npm run test:coverage`                                   |
+| **Accessibility**     | Step-free routing as a first-class feature, WCAG-minded UI, ARIA live regions, RTL, automated axe tests                | `components/`, `tests/components`, `lib/i18n`                       |
 
 ## Getting started
 

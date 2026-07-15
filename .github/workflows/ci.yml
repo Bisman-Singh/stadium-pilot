@@ -26,6 +26,9 @@ jobs:
       - name: Lint
         run: npm run lint
 
+      - name: Format check
+        run: npm run format:check
+
       - name: Test with coverage (100% thresholds enforced)
         run: npm run test:coverage
 

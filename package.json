@@ -4,6 +4,22 @@
   "private": true,
   "description": "A GenAI companion for World Cup 2026 match days: a multilingual fan copilot and a live stadium operations center, both grounded in a deterministic venue model.",
   "license": "MIT",
+  "homepage": "https://stadium.bisman.org",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Bisman-Singh/stadium-pilot.git"
+  },
+  "keywords": [
+    "nextjs",
+    "generative-ai",
+    "gemini",
+    "ai-sdk",
+    "accessibility",
+    "stadium-operations"
+  ],
+  "engines": {
+    "node": ">=20"
+  },
   "scripts": {
     "dev": "next dev",
     "build": "next build",
@@ -44,5 +60,8 @@
     "typescript": "^5",
     "vitest": "^4.1.10",
     "vitest-axe": "^0.1.0"
+  },
+  "overrides": {
+    "postcss": "^8.5.10"
   }
 }

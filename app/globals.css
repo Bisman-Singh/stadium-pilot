@@ -6,6 +6,7 @@
  * cool-to-hot density scale used by the crowd heat grid. Both themes styled.
  */
 :root {
+  color-scheme: dark;
   --base: #0a0f0d;
   --surface: #101815;
   --panel: #16211d;
@@ -26,6 +27,7 @@
 }
 
 :root[data-theme="light"] {
+  color-scheme: light;
   --base: #eef2f0;
   --surface: #ffffff;
   --panel: #f4f7f5;
