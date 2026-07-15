@@ -1,5 +1,6 @@
 import { APP_NAME, APP_VERSION } from "@/lib/constants";
 import { generateProse } from "@/lib/ai/client";
+import { logError } from "@/lib/log";
 
 export const dynamic = "force-dynamic";
 
@@ -16,7 +17,8 @@ export async function GET(req: Request): Promise<Response> {
     try {
       await generateProse("Reply with the single word OK.", "OK");
       modelReachable = true;
-    } catch {
+    } catch (error) {
+      logError("health.deep", error);
       modelReachable = false;
     }
   }
