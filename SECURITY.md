@@ -5,7 +5,7 @@ This document describes the controls that ship with it and how to report a probl
 
 ## Reporting a vulnerability
 
-Please report suspected vulnerabilities privately to **bismanmadaan1@gmail.com**
+Please report suspected vulnerabilities privately to **[bismanmadaan1@gmail.com](mailto:bismanmadaan1@gmail.com)**
 rather than opening a public issue. Include steps to reproduce and the affected
 route or component. You can expect an acknowledgement within a few days.
 

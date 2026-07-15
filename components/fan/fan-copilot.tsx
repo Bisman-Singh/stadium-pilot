@@ -22,13 +22,17 @@ export function FanCopilot() {
   const zones = listZones();
 
   useEffect(() => {
-    endRef.current?.scrollIntoView?.({ behavior: "smooth", block: "end" });
+    const node = endRef.current;
+    // jsdom does not implement scrollIntoView, so feature-detect rather than assume.
+    if (node && typeof node.scrollIntoView === "function") {
+      node.scrollIntoView({ behavior: "smooth", block: "end" });
+    }
   }, [messages, busy]);
 
   const send = (text: string) => {
     const trimmed = text.trim();
     if (!trimmed || busy) return;
-    sendMessage(
+    void sendMessage(
       { text: trimmed },
       { body: { locationZone: locationZone || undefined, stepFreeOnly, locale } },
     );
@@ -105,7 +109,7 @@ export function FanCopilot() {
           <span>{dict.fanError}</span>
           <button
             type="button"
-            onClick={() => regenerate()}
+            onClick={() => void regenerate()}
             className="rounded-md border border-line px-3 py-1 font-medium hover:border-accent"
           >
             {dict.fanRetry}
@@ -125,7 +129,7 @@ export function FanCopilot() {
         {busy ? (
           <button
             type="button"
-            onClick={stop}
+            onClick={() => void stop()}
             className="rounded-lg border border-line px-4 py-2.5 font-medium hover:border-accent"
           >
             {dict.fanStop}

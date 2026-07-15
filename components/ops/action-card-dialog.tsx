@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import type { Incident } from "@/lib/sim";
 import { actionCardSchema, type ActionCard } from "@/lib/ai/schemas";
 import { COPY_FEEDBACK_MS } from "@/lib/constants";
+import { readJson } from "@/lib/json";
 
 const SEVERITY_VAR: Record<ActionCard["severity"], string> = {
   low: "--d-moderate",
@@ -13,18 +14,19 @@ const SEVERITY_VAR: Record<ActionCard["severity"], string> = {
 
 function CopyButton({ text }: { text: string }) {
   const [copied, setCopied] = useState(false);
+  const copy = async () => {
+    try {
+      await navigator.clipboard.writeText(text);
+      setCopied(true);
+      window.setTimeout(() => setCopied(false), COPY_FEEDBACK_MS);
+    } catch {
+      // Clipboard unavailable (insecure context, tests); ignore silently.
+    }
+  };
   return (
     <button
       type="button"
-      onClick={async () => {
-        try {
-          await navigator.clipboard?.writeText(text);
-          setCopied(true);
-          window.setTimeout(() => setCopied(false), COPY_FEEDBACK_MS);
-        } catch {
-          // Clipboard unavailable; ignore silently.
-        }
-      }}
+      onClick={() => void copy()}
       className="rounded border border-line px-2 py-0.5 text-xs hover:border-accent"
     >
       {copied ? "Copied" : "Copy"}
@@ -47,8 +49,9 @@ export function ActionCardDialog({
   const titleId = "action-card-title";
 
   useEffect(() => {
-    let cancelled = false;
-    (async () => {
+    // Aborting on unmount cancels the in-flight request as well as the state writes.
+    const controller = new AbortController();
+    const load = async () => {
       try {
         setLoading(true);
         setFailed(false);
@@ -56,24 +59,22 @@ export function ActionCardDialog({
           method: "POST",
           headers: { "content-type": "application/json" },
           body: JSON.stringify({ incidentId: incident.id }),
+          signal: controller.signal,
         });
         if (!res.ok) throw new Error("action failed");
-        const json: { card?: unknown } = await res.json();
+        const json = await readJson<{ card?: unknown }>(res);
         // Re-validate at the client boundary; a malformed card shows the error state.
         const parsed = actionCardSchema.safeParse(json.card);
-        if (!cancelled) {
-          if (parsed.success) setCard(parsed.data);
-          else setFailed(true);
-        }
+        if (parsed.success) setCard(parsed.data);
+        else setFailed(true);
       } catch {
-        if (!cancelled) setFailed(true);
+        if (!controller.signal.aborted) setFailed(true);
       } finally {
-        if (!cancelled) setLoading(false);
+        if (!controller.signal.aborted) setLoading(false);
       }
-    })();
-    return () => {
-      cancelled = true;
     };
+    void load();
+    return () => controller.abort();
   }, [incident.id]);
 
   useEffect(() => {

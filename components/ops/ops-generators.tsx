@@ -4,6 +4,7 @@ import { useState } from "react";
 import { VENUE } from "@/lib/venue";
 import { MarkdownLite } from "@/components/markdown-lite";
 import { OpsPanel } from "./panel";
+import { readJson } from "@/lib/json";
 
 const SHIFTS = ["pre-match", "first-half", "halftime", "second-half", "egress"] as const;
 
@@ -28,7 +29,7 @@ export function OpsGenerators({ minute }: { minute: number }) {
         body: JSON.stringify({ gateId, shift }),
       });
       if (!res.ok) throw new Error("briefing failed");
-      const json: { briefing?: string } = await res.json();
+      const json = await readJson<{ briefing?: string }>(res);
       setBriefing(json.briefing ?? "");
     } catch {
       setBriefingFailed(true);
@@ -47,7 +48,7 @@ export function OpsGenerators({ minute }: { minute: number }) {
         body: JSON.stringify({ upToMinute: Math.round(minute) }),
       });
       if (!res.ok) throw new Error("report failed");
-      const json: { report?: string } = await res.json();
+      const json = await readJson<{ report?: string }>(res);
       setReport(json.report ?? "");
     } catch {
       setReportFailed(true);
@@ -105,7 +106,7 @@ export function OpsGenerators({ minute }: { minute: number }) {
         </div>
         <button
           type="button"
-          onClick={generateBriefing}
+          onClick={() => void generateBriefing()}
           disabled={briefingLoading}
           className="mt-3 rounded-lg bg-accent px-4 py-2 font-semibold text-accent-ink disabled:bg-line disabled:text-muted"
         >
@@ -130,7 +131,7 @@ export function OpsGenerators({ minute }: { minute: number }) {
         <div className="mt-3 flex gap-2">
           <button
             type="button"
-            onClick={generateReport}
+            onClick={() => void generateReport()}
             disabled={reportLoading}
             className="rounded-lg bg-accent px-4 py-2 font-semibold text-accent-ink disabled:bg-line disabled:text-muted"
           >

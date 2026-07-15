@@ -24,10 +24,15 @@ interface AppContextValue {
 
 const AppContext = createContext<AppContextValue | null>(null);
 
+// The DOM lib types these globals as always-present; SSR and jsdom disagree,
+// so a widened return type makes the absence visible to the type system.
+const maybeLocalStorage = (): Storage | undefined => globalThis.localStorage;
+const maybeMatchMedia = (): typeof globalThis.matchMedia | undefined => globalThis.matchMedia;
+
 /** localStorage can be absent (SSR, tests) or throw (private mode); never let it break the app. */
 function readStored(key: string): string | null {
   try {
-    return globalThis.localStorage?.getItem(key) ?? null;
+    return maybeLocalStorage()?.getItem(key) ?? null;
   } catch {
     return null;
   }
@@ -35,7 +40,7 @@ function readStored(key: string): string | null {
 
 function writeStored(key: string, value: string): void {
   try {
-    globalThis.localStorage?.setItem(key, value);
+    maybeLocalStorage()?.setItem(key, value);
   } catch {
     // Storage unavailable; the preference simply will not persist.
   }
@@ -84,7 +89,7 @@ function createPreferenceStore<T extends string>(
 const isLocale = (value: string): value is Locale => SUPPORTED_LOCALES.some((l) => l === value);
 const isTheme = (value: string): value is Theme => value === "dark" || value === "light";
 const prefersLight = (): boolean =>
-  globalThis.matchMedia?.("(prefers-color-scheme: light)").matches === true;
+  maybeMatchMedia()?.("(prefers-color-scheme: light)").matches === true;
 
 const localeStore = createPreferenceStore<Locale>("sp-locale", isLocale, () => DEFAULT_LOCALE);
 const themeStore = createPreferenceStore<Theme>("sp-theme", isTheme, () =>

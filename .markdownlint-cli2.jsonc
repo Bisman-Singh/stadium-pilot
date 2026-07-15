@@ -1,0 +1,7 @@
+{
+  // Tables and long URLs cannot wrap at 80 columns; every other rule applies.
+  "config": {
+    "MD013": false,
+  },
+  "ignores": ["node_modules/**", "coverage/**", ".next/**"],
+}

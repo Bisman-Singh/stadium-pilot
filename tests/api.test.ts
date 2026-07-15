@@ -35,6 +35,7 @@ import { POST as announcePost } from "@/app/api/ops/announce/route";
 import { POST as briefingPost } from "@/app/api/ops/briefing/route";
 import { POST as reportPost } from "@/app/api/ops/report/route";
 import { GET as healthGet } from "@/app/api/health/route";
+import { readJson } from "@/lib/json";
 
 let ipCounter = 0;
 function freshIp(): string {
@@ -101,9 +102,11 @@ describe("GET /api/crowd", () => {
   it("returns a snapshot and active incidents", async () => {
     const res = await crowdGet(get("/api/crowd?minute=98"));
     expect(res.status).toBe(200);
-    const body = await res.json();
+    const body = await readJson<{ snapshot: { zones: unknown[] }; incidents: { kind: string }[] }>(
+      res,
+    );
     expect(body.snapshot.zones).toHaveLength(12);
-    expect(body.incidents.some((i: { kind: string }) => i.kind === "crowd")).toBe(true);
+    expect(body.incidents.some((i) => i.kind === "crowd")).toBe(true);
   });
 
   it("rejects an out-of-range minute", async () => {
@@ -116,7 +119,7 @@ describe("POST /api/ops/action", () => {
   it("returns a schema-shaped action card for a known incident", async () => {
     const res = await actionPost(post("/api/ops/action", { incidentId: "inc-crowd-cn" }));
     expect(res.status).toBe(200);
-    const body = await res.json();
+    const body = await readJson<{ card: { severity: string; actions: string[] } }>(res);
     expect(body.card.severity).toBe("high");
     expect(body.card.actions.length).toBeGreaterThanOrEqual(2);
   });
@@ -132,10 +135,10 @@ describe("POST /api/ops/announce", () => {
     const body = { topic: "Gate C is now open", tone: "friendly", languages: ["en", "es"] };
     const first = await announcePost(post("/api/ops/announce", body));
     expect(first.status).toBe(200);
-    expect((await first.json()).cached).toBe(false);
+    expect((await readJson<{ cached: boolean }>(first)).cached).toBe(false);
 
     const second = await announcePost(post("/api/ops/announce", body));
-    expect((await second.json()).cached).toBe(true);
+    expect((await readJson<{ cached: boolean }>(second)).cached).toBe(true);
   });
 
   it("rejects an invalid tone", async () => {
@@ -150,7 +153,7 @@ describe("POST /api/ops/briefing", () => {
   it("returns a briefing for a known gate", async () => {
     const res = await briefingPost(post("/api/ops/briefing", { gateId: "A", shift: "pre-match" }));
     expect(res.status).toBe(200);
-    expect((await res.json()).briefing).toContain("Report");
+    expect((await readJson<{ briefing: string }>(res)).briefing).toContain("Report");
   });
 
   it("404s for an unknown gate", async () => {
@@ -163,7 +166,7 @@ describe("POST /api/ops/report", () => {
   it("returns a report and telemetry summary", async () => {
     const res = await reportPost(post("/api/ops/report", { upToMinute: 150 }));
     expect(res.status).toBe(200);
-    const body = await res.json();
+    const body = await readJson<{ report: string; summary: { peakZones: unknown[] } }>(res);
     expect(body.report).toContain("Report");
     expect(body.summary.peakZones).toHaveLength(5);
   });
@@ -173,7 +176,7 @@ describe("GET /api/health", () => {
   it("reports status and configuration", async () => {
     const res = await healthGet(get("/api/health"));
     expect(res.status).toBe(200);
-    const body = await res.json();
+    const body = await readJson<{ status: string; aiConfigured: boolean }>(res);
     expect(body.status).toBe("ok");
     expect(typeof body.aiConfigured).toBe("boolean");
   });

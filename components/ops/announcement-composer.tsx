@@ -4,6 +4,7 @@ import { useState, type FormEvent } from "react";
 import { SUPPORTED_LOCALES, type Locale } from "@/lib/constants";
 import { LOCALE_LABELS } from "@/lib/i18n";
 import { OpsPanel } from "./panel";
+import { readJson } from "@/lib/json";
 
 interface AnnouncementItem {
   language: string;
@@ -38,7 +39,7 @@ export function AnnouncementComposer() {
         body: JSON.stringify({ topic: topic.trim(), tone, languages }),
       });
       if (!res.ok) throw new Error("announce failed");
-      const json: { announcements?: AnnouncementItem[] } = await res.json();
+      const json = await readJson<{ announcements?: AnnouncementItem[] }>(res);
       setItems(json.announcements ?? []);
     } catch {
       setFailed(true);
@@ -49,7 +50,7 @@ export function AnnouncementComposer() {
 
   return (
     <OpsPanel title="Multilingual PA announcement" ariaLabel="Multilingual announcement composer">
-      <form onSubmit={submit} className="mt-3 space-y-3">
+      <form onSubmit={(event) => void submit(event)} className="mt-3 space-y-3">
         <label className="block text-sm">
           <span className="text-muted">Topic</span>
           <input

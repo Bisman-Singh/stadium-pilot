@@ -5,6 +5,7 @@ import type { CrowdSnapshot, Incident } from "@/lib/sim";
 import { telemetrySummary } from "@/lib/sim";
 import { MATCH_WINDOW_MINUTES, OPS_POLL_MS } from "@/lib/constants";
 import { KpiRow, type Kpi } from "./kpi-row";
+import { readJson } from "@/lib/json";
 import { ZoneHeatGrid } from "./zone-heat-grid";
 import { AlertFeed } from "./alert-feed";
 import { AnnouncementComposer } from "./announcement-composer";
@@ -34,7 +35,7 @@ export function OpsConsole() {
       const url = targetMinute === undefined ? "/api/crowd" : `/api/crowd?minute=${targetMinute}`;
       const res = await fetch(url);
       if (!res.ok) throw new Error("crowd fetch failed");
-      const json: CrowdData = await res.json();
+      const json = await readJson<CrowdData>(res);
       setData(json);
       setMinute(json.snapshot.minute);
       setFailed(false);
@@ -59,12 +60,12 @@ export function OpsConsole() {
   const onScrub = (value: number) => {
     setLive(false);
     setMinute(value);
-    load(value);
+    void load(value);
   };
 
   const goLive = () => {
     setLive(true);
-    load();
+    void load();
   };
 
   const snapshot = data?.snapshot;

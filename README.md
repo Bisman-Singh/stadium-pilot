@@ -35,7 +35,7 @@ that:
 
 The design separates **deterministic ground truth** from **generative language**.
 
-```
+```text
              deterministic core                         generative layer
    ┌─────────────────────────────────┐        ┌──────────────────────────────┐
    │  venue graph (zones, gates,     │        │  Gemini via the AI SDK       │
@@ -119,7 +119,7 @@ need the key.
 
 ## Project layout
 
-```
+```text
 app/            routes: landing, /fan, /ops, /about, and /api/*
 components/     fan and ops UI, all accessible and theme-aware
 lib/venue/      the venue graph, amenities, and Dijkstra routing
