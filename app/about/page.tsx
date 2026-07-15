@@ -7,14 +7,38 @@ export const metadata: Metadata = {
 };
 
 const MAPPING: { theme: string; feature: string }[] = [
-  { theme: "Navigation", feature: "Graph-routed directions narrated by AI, with QR-style location deep links." },
-  { theme: "Crowd management", feature: "Live density heat grid, threshold alerts, and AI dispersal recommendations." },
-  { theme: "Accessibility", feature: "Step-free routing, accessible amenity finder, and a WCAG-minded interface." },
-  { theme: "Transportation", feature: "Metro, shuttle, rideshare, and parking guidance combined with live crowd state." },
-  { theme: "Sustainability", feature: "Recycling and refill finder plus waste-diversion and refill KPIs." },
-  { theme: "Multilingual assistance", feature: "Copilot replies in the fan's language; PA drafts in several languages at once." },
-  { theme: "Operational intelligence", feature: "AI incident summaries, volunteer briefings, and an end-of-match report." },
-  { theme: "Real-time decision support", feature: "Each alert becomes a structured action card with human-in-the-loop confirm." },
+  {
+    theme: "Navigation",
+    feature: "Graph-routed directions narrated by AI, with QR-style location deep links.",
+  },
+  {
+    theme: "Crowd management",
+    feature: "Live density heat grid, threshold alerts, and AI dispersal recommendations.",
+  },
+  {
+    theme: "Accessibility",
+    feature: "Step-free routing, accessible amenity finder, and a WCAG-minded interface.",
+  },
+  {
+    theme: "Transportation",
+    feature: "Metro, shuttle, rideshare, and parking guidance combined with live crowd state.",
+  },
+  {
+    theme: "Sustainability",
+    feature: "Recycling and refill finder plus waste-diversion and refill KPIs.",
+  },
+  {
+    theme: "Multilingual assistance",
+    feature: "Copilot replies in the fan's language; PA drafts in several languages at once.",
+  },
+  {
+    theme: "Operational intelligence",
+    feature: "AI incident summaries, volunteer briefings, and an end-of-match report.",
+  },
+  {
+    theme: "Real-time decision support",
+    feature: "Each alert becomes a structured action card with human-in-the-loop confirm.",
+  },
 ];
 
 const GENAI_USES = [
@@ -41,8 +65,12 @@ export default function AboutPage() {
         <table className="w-full border-collapse text-sm">
           <thead>
             <tr className="border-b border-line text-left">
-              <th scope="col" className="py-2 pe-4 font-semibold">Theme</th>
-              <th scope="col" className="py-2 font-semibold">How StadiumPilot addresses it</th>
+              <th scope="col" className="py-2 pe-4 font-semibold">
+                Theme
+              </th>
+              <th scope="col" className="py-2 font-semibold">
+                How StadiumPilot addresses it
+              </th>
             </tr>
           </thead>
           <tbody>
@@ -67,10 +95,10 @@ export default function AboutPage() {
       <p className="mt-3 text-muted">
         A typed venue graph provides routing and amenities; a seeded, deterministic crowd model
         turns the match minute into live density, incidents, and telemetry with no database. The AI
-        layer (Vercel AI SDK with Google Gemini) is reached only through server routes that
-        validate input, rate-limit per client, enforce same-origin, and cap output tokens. The fan
-        copilot is grounded through read-only tools, so it cannot invent venue facts and prompt
-        injection cannot cause side effects.
+        layer (Vercel AI SDK with Google Gemini) is reached only through server routes that validate
+        input, rate-limit per client, enforce same-origin, and cap output tokens. The fan copilot is
+        grounded through read-only tools, so it cannot invent venue facts and prompt injection
+        cannot cause side effects.
       </p>
 
       <h2 className="mt-8 text-xl font-semibold">Accessibility</h2>

@@ -1,13 +1,7 @@
 import { describe, it, expect } from "vitest";
 import { LruCache } from "@/lib/cache";
 import { RateLimiter, rateLimit } from "@/lib/rate-limit";
-import {
-  clientIp,
-  isSameOrigin,
-  readJsonBody,
-  toErrorResponse,
-  HttpError,
-} from "@/lib/http";
+import { clientIp, isSameOrigin, readJsonBody, toErrorResponse, HttpError } from "@/lib/http";
 import {
   chatBodySchema,
   announceBodySchema,
@@ -87,7 +81,9 @@ describe("http helpers", () => {
   });
 
   it("parses valid JSON and rejects invalid or oversized bodies", async () => {
-    await expect(readJsonBody(post({}, JSON.stringify({ ok: true })))).resolves.toEqual({ ok: true });
+    await expect(readJsonBody(post({}, JSON.stringify({ ok: true })))).resolves.toEqual({
+      ok: true,
+    });
     await expect(readJsonBody(post({}, "not json"))).rejects.toBeInstanceOf(HttpError);
     const huge = JSON.stringify({ x: "a".repeat(20_000) });
     await expect(readJsonBody(post({}, huge))).rejects.toMatchObject({ status: 413 });
@@ -101,9 +97,9 @@ describe("http helpers", () => {
 
 describe("input validation", () => {
   it("accepts a valid chat body and rejects empty message lists", () => {
-    expect(
-      chatBodySchema.safeParse({ messages: [{ role: "user", parts: [] }] }).success,
-    ).toBe(true);
+    expect(chatBodySchema.safeParse({ messages: [{ role: "user", parts: [] }] }).success).toBe(
+      true,
+    );
     expect(chatBodySchema.safeParse({ messages: [] }).success).toBe(false);
   });
 

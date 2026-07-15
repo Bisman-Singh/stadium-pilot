@@ -3,13 +3,7 @@
  * alert feed and the AI action cards. Every incident anchors to a real zone id.
  */
 
-export type IncidentKind =
-  | "turnstile"
-  | "medical"
-  | "crowd"
-  | "weather"
-  | "security"
-  | "transport";
+export type IncidentKind = "turnstile" | "medical" | "crowd" | "weather" | "security" | "transport";
 
 export type Severity = "low" | "medium" | "high";
 
@@ -63,7 +57,8 @@ const INCIDENTS: Incident[] = [
     kind: "weather",
     severity: "medium",
     title: "Heavy rain approaching",
-    detail: "A weather warning indicates heavy rain in about 20 minutes. Open covered waiting areas.",
+    detail:
+      "A weather warning indicates heavy rain in about 20 minutes. Open covered waiting areas.",
   },
   {
     id: "inc-transport-th",

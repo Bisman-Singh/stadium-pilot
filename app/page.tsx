@@ -20,9 +20,7 @@ export default function HomePage() {
         <span className="inline-block rounded-full border border-line bg-surface px-3 py-1 text-xs font-semibold uppercase tracking-wide text-accent">
           Challenge 4 · Smart Stadiums &amp; Tournament Operations
         </span>
-        <h1 className="mt-4 max-w-3xl text-4xl font-bold tracking-tight sm:text-5xl">
-          {APP_NAME}
-        </h1>
+        <h1 className="mt-4 max-w-3xl text-4xl font-bold tracking-tight sm:text-5xl">{APP_NAME}</h1>
         <p className="mt-3 max-w-2xl text-lg text-muted">{APP_TAGLINE}</p>
         <p className="mt-2 max-w-2xl text-muted">
           One app, two sides: a multilingual copilot for fans, and a live operations center for
@@ -75,10 +73,7 @@ export default function HomePage() {
         </h2>
         <ul className="mt-3 flex flex-wrap gap-2">
           {THEMES.map((theme) => (
-            <li
-              key={theme}
-              className="rounded-full border border-line bg-panel px-3 py-1 text-sm"
-            >
+            <li key={theme} className="rounded-full border border-line bg-panel px-3 py-1 text-sm">
               {theme}
             </li>
           ))}
@@ -103,8 +98,8 @@ export default function HomePage() {
         <div className="rounded-xl border border-line bg-surface p-5">
           <h3 className="font-semibold">Built for everyone</h3>
           <p className="mt-2 text-sm text-muted">
-            Full keyboard support, screen-reader friendly, right-to-left languages, and a
-            step-free mode for accessible routing throughout.
+            Full keyboard support, screen-reader friendly, right-to-left languages, and a step-free
+            mode for accessible routing throughout.
           </p>
         </div>
       </section>

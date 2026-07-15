@@ -22,16 +22,16 @@ route or component. You can expect an acknowledgement within a few days.
 
 ## Controls in the codebase
 
-| Area | Control | Where |
-|---|---|---|
-| Secrets | API key read from env only; never committed; `.env*` gitignored | `lib/ai/client.ts`, `.gitignore` |
-| Transport | HSTS, `X-Frame-Options: DENY`, `X-Content-Type-Options`, Referrer-Policy, Permissions-Policy | `next.config.ts` |
-| Content | Content-Security-Policy restricting scripts, styles, and connect targets | `next.config.ts` |
-| CSRF | Cross-origin POSTs rejected by an Origin/Host check | `lib/http.ts` (`isSameOrigin`) |
-| Abuse | Sliding-window per-IP rate limiting on every API route | `lib/rate-limit.ts` |
-| Input | Zod schema validation and a request body-size cap on all inputs | `lib/validate.ts`, `lib/http.ts` |
-| Output | Errors return opaque messages; stack traces are logged server-side only | `lib/http.ts` (`toErrorResponse`) |
-| Model | `thinkingBudget: 0`, output token caps, and a model fallback bound cost and blast radius | `lib/ai/client.ts` |
+| Area      | Control                                                                                      | Where                             |
+| --------- | -------------------------------------------------------------------------------------------- | --------------------------------- |
+| Secrets   | API key read from env only; never committed; `.env*` gitignored                              | `lib/ai/client.ts`, `.gitignore`  |
+| Transport | HSTS, `X-Frame-Options: DENY`, `X-Content-Type-Options`, Referrer-Policy, Permissions-Policy | `next.config.ts`                  |
+| Content   | Content-Security-Policy restricting scripts, styles, and connect targets                     | `next.config.ts`                  |
+| CSRF      | Cross-origin POSTs rejected by an Origin/Host check                                          | `lib/http.ts` (`isSameOrigin`)    |
+| Abuse     | Sliding-window per-IP rate limiting on every API route                                       | `lib/rate-limit.ts`               |
+| Input     | Zod schema validation and a request body-size cap on all inputs                              | `lib/validate.ts`, `lib/http.ts`  |
+| Output    | Errors return opaque messages; stack traces are logged server-side only                      | `lib/http.ts` (`toErrorResponse`) |
+| Model     | `thinkingBudget: 0`, output token caps, and a model fallback bound cost and blast radius     | `lib/ai/client.ts`                |
 
 ## Handling of the demo API key
 

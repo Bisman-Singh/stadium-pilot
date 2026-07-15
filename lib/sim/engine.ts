@@ -11,12 +11,7 @@ import { noise } from "./rng";
  */
 
 export type MatchPhase =
-  | "pre-gates"
-  | "ingress"
-  | "first-half"
-  | "halftime"
-  | "second-half"
-  | "egress";
+  "pre-gates" | "ingress" | "first-half" | "halftime" | "second-half" | "egress";
 
 export type DensityLevel = "low" | "moderate" | "high" | "critical";
 

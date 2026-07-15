@@ -45,11 +45,7 @@ export class RateLimiter {
 const limiters = new Map<string, RateLimiter>();
 
 /** Shared limiter per named route, configured from RATE_LIMITS. */
-export function rateLimit(
-  name: keyof typeof RATE_LIMITS,
-  key: string,
-  nowMs?: number,
-): RateResult {
+export function rateLimit(name: keyof typeof RATE_LIMITS, key: string, nowMs?: number): RateResult {
   let limiter = limiters.get(name);
   if (!limiter) {
     const config = RATE_LIMITS[name];

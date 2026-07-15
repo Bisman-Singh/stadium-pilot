@@ -16,7 +16,11 @@ vi.mock("@/lib/ai/client", () => ({
         summary: "Congestion building.",
         actions: ["Open east doors", "Send stewards"],
         staffingMove: "Move two stewards from Gate B.",
-        paDraft: { en: "Please use other exits.", es: "Usen otras salidas.", fr: "Utilisez d'autres sorties." },
+        paDraft: {
+          en: "Please use other exits.",
+          es: "Usen otras salidas.",
+          fr: "Utilisez d'autres sorties.",
+        },
       };
     }
     return { announcements: [{ language: "English", localeCode: "en", script: "Welcome." }] };
@@ -84,7 +88,9 @@ describe("POST /api/chat", () => {
     const ip = "203.0.113.7";
     let last: Response | undefined;
     for (let i = 0; i < 14; i++) {
-      last = await chatPost(post("/api/chat", { messages: oneUserMessage }, { "x-forwarded-for": ip }));
+      last = await chatPost(
+        post("/api/chat", { messages: oneUserMessage }, { "x-forwarded-for": ip }),
+      );
     }
     expect(last?.status).toBe(429);
     expect(last?.headers.get("retry-after")).toBeTruthy();

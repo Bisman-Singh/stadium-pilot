@@ -1,7 +1,14 @@
 import { tool } from "ai";
 import { z } from "zod";
 import { DEMO_LOOP_SECONDS } from "../constants";
-import { VENUE, getZone, resolveLocation, route, searchAmenities, type RouteResult } from "../venue";
+import {
+  VENUE,
+  getZone,
+  resolveLocation,
+  route,
+  searchAmenities,
+  type RouteResult,
+} from "../venue";
 import { matchMinuteFromWallClock, snapshot, type CrowdSnapshot } from "../sim";
 
 /**
@@ -156,7 +163,8 @@ export const fanTools = {
   }),
 
   getEventInfo: tool({
-    description: "Match and venue basics: teams, kickoff time, gates-open time, venue and capacity.",
+    description:
+      "Match and venue basics: teams, kickoff time, gates-open time, venue and capacity.",
     inputSchema: z.object({
       _: z.string().optional().describe("Unused; this tool takes no meaningful input."),
     }),

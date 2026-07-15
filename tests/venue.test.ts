@@ -3,14 +3,7 @@ import { venueSchema } from "@/lib/venue/schema";
 import { findRoute } from "@/lib/venue/graph";
 import { findAmenities } from "@/lib/venue/amenities";
 import type { Zone } from "@/lib/venue/types";
-import {
-  VENUE,
-  route,
-  searchAmenities,
-  resolveLocation,
-  gateForZone,
-  getZone,
-} from "@/lib/venue";
+import { VENUE, route, searchAmenities, resolveLocation, gateForZone, getZone } from "@/lib/venue";
 
 describe("venue data integrity", () => {
   it("passes the full schema including referential integrity", () => {
@@ -35,7 +28,9 @@ describe("venue data integrity", () => {
     for (const upper of ["N2", "E2", "S2", "W2"]) {
       const stepFree = route("TH", upper, { stepFreeOnly: true });
       expect(stepFree, `TH -> ${upper} step-free`).not.toBeNull();
-      expect(stepFree?.steps.some((s) => s.kind === "stairs" || s.kind === "escalator")).toBe(false);
+      expect(stepFree?.steps.some((s) => s.kind === "stairs" || s.kind === "escalator")).toBe(
+        false,
+      );
     }
   });
 });
@@ -73,8 +68,25 @@ describe("routing", () => {
 
   it("finds the shortest path on a tiny hand-built graph", () => {
     const zones: Zone[] = [
-      { id: "A", name: "A", role: "plaza", level: 1, capacity: 1, edges: [{ to: "B", kind: "walkway", metres: 10 }, { to: "C", kind: "walkway", metres: 100 }] },
-      { id: "B", name: "B", role: "plaza", level: 1, capacity: 1, edges: [{ to: "C", kind: "walkway", metres: 10 }] },
+      {
+        id: "A",
+        name: "A",
+        role: "plaza",
+        level: 1,
+        capacity: 1,
+        edges: [
+          { to: "B", kind: "walkway", metres: 10 },
+          { to: "C", kind: "walkway", metres: 100 },
+        ],
+      },
+      {
+        id: "B",
+        name: "B",
+        role: "plaza",
+        level: 1,
+        capacity: 1,
+        edges: [{ to: "C", kind: "walkway", metres: 10 }],
+      },
       { id: "C", name: "C", role: "plaza", level: 1, capacity: 1, edges: [] },
     ];
     const r = findRoute(zones, "A", "C");
@@ -105,7 +117,10 @@ describe("amenity search", () => {
   });
 
   it("returns only accessible amenities when accessibleOnly is set", () => {
-    const results = searchAmenities({ types: ["restroom", "accessible-restroom"], accessibleOnly: true });
+    const results = searchAmenities({
+      types: ["restroom", "accessible-restroom"],
+      accessibleOnly: true,
+    });
     expect(results.every((a) => a.accessible)).toBe(true);
   });
 

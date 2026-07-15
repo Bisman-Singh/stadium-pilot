@@ -27,6 +27,5 @@ export const es: Dictionary = {
   chipRecycling: "Puntos de reciclaje",
   disclaimer:
     "Demostración no oficial. Sin afiliación con la FIFA ni con ningún recinto real. Todos los datos del estadio son ficticios.",
-  poweredBy:
-    "Basado en datos del estadio. La IA generativa nunca inventa datos del recinto.",
+  poweredBy: "Basado en datos del estadio. La IA generativa nunca inventa datos del recinto.",
 };
