@@ -158,6 +158,12 @@ describe("location + gate resolution", () => {
     expect(resolveLocation("g")).toBe("PL");
   });
 
+  it("extracts a section number from free-text phrases", () => {
+    expect(resolveLocation("section 121")).toBe("S1");
+    expect(resolveLocation("Seat 224 please")).toBe("S2");
+    expect(resolveLocation("row 999")).toBeUndefined();
+  });
+
   it("matches a lowercase zone id via the exact-name comparison", () => {
     expect(resolveLocation("cn")).toBe("CN");
   });

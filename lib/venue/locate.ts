@@ -38,5 +38,11 @@ export function resolveLocation(input: string): string | undefined {
   const gate =
     VENUE.gates.find((g) => g.id.toLowerCase() === lower) ??
     VENUE.gates.find((g) => g.name.toLowerCase().includes(lower));
-  return gate?.servesZones[0];
+  if (gate) return gate.servesZones[0];
+
+  // Free text like "section 121" or "seat 224" carries the id inside a phrase.
+  const embeddedNumber = raw.match(/\d+/)?.[0];
+  const numberedSection =
+    embeddedNumber === undefined ? undefined : sectionsById.get(embeddedNumber);
+  return numberedSection?.zoneId;
 }
