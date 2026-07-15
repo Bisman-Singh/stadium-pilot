@@ -8,7 +8,7 @@ import { LruCache } from "@/lib/cache";
 import { LOCALE_LABELS } from "@/lib/i18n";
 import { AI_CACHE_TTL_MS, ANNOUNCE_CACHE_ENTRIES } from "@/lib/constants";
 
-export const maxDuration = 30;
+export const maxDuration = 60;
 
 const cache = new LruCache<AnnouncementSet>(ANNOUNCE_CACHE_ENTRIES, AI_CACHE_TTL_MS);
 

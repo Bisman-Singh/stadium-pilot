@@ -7,7 +7,7 @@ import { errorResponse, toErrorResponse } from "@/lib/http";
 import { incidentById, snapshot } from "@/lib/sim";
 import { VENUE, getZone } from "@/lib/venue";
 
-export const maxDuration = 30;
+export const maxDuration = 60;
 
 export async function POST(req: Request): Promise<Response> {
   try {

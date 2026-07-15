@@ -25,19 +25,22 @@ const FALLBACK_MODEL = "gemini-3-flash-preview";
 
 // Disables Gemini 2.5 "thinking" to cut latency and token spend on the free tier.
 const NO_THINKING = { google: { thinkingConfig: { thinkingBudget: 0 } } };
+// Gemini 3 models tune reasoning depth via thinkingLevel instead of a budget.
+const MINIMAL_THINKING = { google: { thinkingConfig: { thinkingLevel: "minimal" as const } } };
 
 interface ModelAttempt {
   modelId: string;
-  /** Thinking config only applies to the primary (2.5-family) model. */
-  providerOptions?: typeof NO_THINKING;
+  providerOptions: typeof NO_THINKING | typeof MINIMAL_THINKING;
+  /** The primary fails fast so the fallback still fits in the route's time budget. */
+  maxRetries: number;
 }
 
 /** Runs a generation against the primary model, retrying once on the fallback. */
 async function withModelFallback<T>(run: (attempt: ModelAttempt) => Promise<T>): Promise<T> {
   try {
-    return await run({ modelId: PRIMARY_MODEL, providerOptions: NO_THINKING });
+    return await run({ modelId: PRIMARY_MODEL, providerOptions: NO_THINKING, maxRetries: 1 });
   } catch {
-    return run({ modelId: FALLBACK_MODEL });
+    return run({ modelId: FALLBACK_MODEL, providerOptions: MINIMAL_THINKING, maxRetries: 2 });
   }
 }
 
@@ -64,7 +67,7 @@ export async function generateStructured<T>(
   system: string,
   prompt: string,
 ): Promise<T> {
-  return withModelFallback(async ({ modelId, providerOptions }) => {
+  return withModelFallback(async ({ modelId, providerOptions, maxRetries }) => {
     const { output } = await generateText({
       model: google(modelId),
       system,
@@ -72,6 +75,7 @@ export async function generateStructured<T>(
       output: Output.object({ schema }),
       temperature: 0.3,
       maxOutputTokens: STRUCTURED_MAX_OUTPUT_TOKENS,
+      maxRetries,
       providerOptions,
     });
     return output;
@@ -80,13 +84,14 @@ export async function generateStructured<T>(
 
 /** Generates markdown/prose, falling back to a second model on error. */
 export async function generateProse(system: string, prompt: string): Promise<string> {
-  return withModelFallback(async ({ modelId, providerOptions }) => {
+  return withModelFallback(async ({ modelId, providerOptions, maxRetries }) => {
     const { text } = await generateText({
       model: google(modelId),
       system,
       prompt,
       temperature: 0.4,
       maxOutputTokens: STRUCTURED_MAX_OUTPUT_TOKENS,
+      maxRetries,
       providerOptions,
     });
     return text;

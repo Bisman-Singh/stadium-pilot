@@ -7,7 +7,7 @@ import { LruCache } from "@/lib/cache";
 import { VENUE, getZone } from "@/lib/venue";
 import { AI_CACHE_TTL_MS, BRIEFING_CACHE_ENTRIES } from "@/lib/constants";
 
-export const maxDuration = 30;
+export const maxDuration = 60;
 
 const cache = new LruCache<string>(BRIEFING_CACHE_ENTRIES, AI_CACHE_TTL_MS);
 
