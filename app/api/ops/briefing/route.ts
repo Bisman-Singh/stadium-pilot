@@ -1,16 +1,9 @@
 import { generateProse } from "@/lib/ai/client";
 import { briefingSystem } from "@/lib/ai/prompts";
 import { briefingBodySchema } from "@/lib/validate";
-import { rateLimit } from "@/lib/rate-limit";
+import { guardPost } from "@/lib/api-guard";
+import { errorResponse, toErrorResponse } from "@/lib/http";
 import { LruCache } from "@/lib/cache";
-import {
-  clientIp,
-  errorResponse,
-  isSameOrigin,
-  rateLimitResponse,
-  readJsonBody,
-  toErrorResponse,
-} from "@/lib/http";
 import { VENUE, getZone } from "@/lib/venue";
 
 export const maxDuration = 30;
@@ -19,16 +12,10 @@ const cache = new LruCache<string>(100, 10 * 60 * 1000);
 
 export async function POST(req: Request): Promise<Response> {
   try {
-    if (!isSameOrigin(req)) {
-      return errorResponse(403, "forbidden", "Cross-origin requests are not allowed.");
-    }
-    const limit = rateLimit("ops", clientIp(req));
-    if (!limit.allowed) return rateLimitResponse(limit.retryAfterSec);
+    const guard = await guardPost(req, "ops", briefingBodySchema);
+    if (!guard.ok) return guard.response;
 
-    const parsed = briefingBodySchema.safeParse(await readJsonBody(req));
-    if (!parsed.success) return errorResponse(400, "invalid_request", "The request was not valid.");
-
-    const { gateId, shift } = parsed.data;
+    const { gateId, shift } = guard.data;
     const gate = VENUE.gates.find((g) => g.id === gateId.toUpperCase());
     if (!gate) return errorResponse(404, "not_found", "Unknown gate.");
 
