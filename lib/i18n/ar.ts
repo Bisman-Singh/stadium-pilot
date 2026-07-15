@@ -1,0 +1,31 @@
+import type { Dictionary } from "./en";
+
+export const ar: Dictionary = {
+  tagline: "رفيق ذكاء اصطناعي توليدي لأيام مباريات كأس العالم 2026",
+  navHome: "الرئيسية",
+  navFan: "مساعد المشجعين",
+  navOps: "مركز العمليات",
+  navAbout: "حول",
+  langLabel: "اللغة",
+  fanTitle: "مساعد المشجعين",
+  fanSubtitle: "اسأل أي شيء عن الملعب بلغتك.",
+  fanPlaceholder: "اسأل عن البوابات والطعام والمسارات الميسّرة والمواصلات…",
+  fanSend: "إرسال",
+  fanStop: "إيقاف",
+  fanThinking: "جارٍ التفكير…",
+  fanError: "حدث خطأ ما. حاول مرة أخرى.",
+  fanRetry: "إعادة المحاولة",
+  fanEmpty: "ابدأ بطرح سؤال أو اختر أحد الاقتراحات.",
+  fanRateLimited: "أنت ترسل الرسائل بسرعة. انتظر لحظة من فضلك.",
+  fanStepFree: "المسارات الخالية من الدرج فقط",
+  fanLocation: "موقعك",
+  fanLocationNone: "غير محدد",
+  chipGate: "إيجاد بوابتي",
+  chipFood: "طعام قريب",
+  chipAccessible: "مسار ميسّر",
+  chipTransit: "أفضل طريق للعودة",
+  chipRecycling: "نقاط إعادة التدوير",
+  disclaimer:
+    "عرض توضيحي غير رسمي. لا صلة له بالفيفا أو بأي مكان حقيقي. جميع بيانات الملعب افتراضية.",
+  poweredBy: "يعتمد على بيانات الملعب. الذكاء الاصطناعي التوليدي لا يختلق معلومات عن المكان.",
+};
