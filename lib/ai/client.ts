@@ -19,7 +19,9 @@ import { fanTools } from "./tools";
  */
 
 const PRIMARY_MODEL = "gemini-2.5-flash";
-const FALLBACK_MODEL = "gemini-2.0-flash";
+// 2.0-flash lost its free tier (limit 0) and 2.5-flash-lite is closed to new
+// projects, so the fallback rides the current preview flash model.
+const FALLBACK_MODEL = "gemini-3-flash-preview";
 
 // Disables Gemini 2.5 "thinking" to cut latency and token spend on the free tier.
 const NO_THINKING = { google: { thinkingConfig: { thinkingBudget: 0 } } };
