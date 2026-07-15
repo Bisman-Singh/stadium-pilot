@@ -81,6 +81,7 @@ export function activeIncidents(minute: number): Incident[] {
   ).sort((a, b) => rank[a.severity] - rank[b.severity] || a.startMinute - b.startMinute);
 }
 
+/** Looks up a scheduled incident by id. */
 export function incidentById(id: string): Incident | undefined {
   return INCIDENTS.find((incident) => incident.id === id);
 }

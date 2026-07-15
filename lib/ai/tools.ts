@@ -165,9 +165,7 @@ export const fanTools = {
   getEventInfo: tool({
     description:
       "Match and venue basics: teams, kickoff time, gates-open time, venue and capacity.",
-    inputSchema: z.object({
-      _: z.string().optional().describe("Unused; this tool takes no meaningful input."),
-    }),
+    inputSchema: z.object({}),
     execute: async () => ({
       venue: VENUE.event.venueName,
       capacity: VENUE.event.capacity,

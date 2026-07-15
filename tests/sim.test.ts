@@ -4,7 +4,6 @@ import {
   densityFor,
   phaseAt,
   matchMinuteFromWallClock,
-  overCapacityZones,
   activeIncidents,
   incidentsUpTo,
   incidentById,
@@ -12,8 +11,13 @@ import {
 } from "@/lib/sim";
 import { VENUE } from "@/lib/venue";
 import { MATCH_WINDOW_MINUTES } from "@/lib/constants";
+import { must } from "@/lib/must";
 
-const zoneById = (id: string) => VENUE.zones.find((z) => z.id === id)!;
+const zoneById = (id: string) =>
+  must(
+    VENUE.zones.find((z) => z.id === id),
+    `zone ${id}`,
+  );
 const avgRole = (minute: number, role: string) => {
   const zones = snapshot(minute).zones.filter((z) => z.role === role);
   return zones.reduce((s, z) => s + z.density, 0) / zones.length;
@@ -52,8 +56,9 @@ describe("match phase curve invariants", () => {
     expect(densityFor(zoneById("TH"), 149)).toBeGreaterThan(0.7);
   });
 
-  it("flags at least one over-capacity zone at peak concourse load", () => {
-    expect(overCapacityZones(98).length).toBeGreaterThan(0);
+  it("flags at least one critical zone at peak concourse load", () => {
+    const critical = snapshot(98).zones.filter((z) => z.level === "critical");
+    expect(critical.length).toBeGreaterThan(0);
   });
 });
 

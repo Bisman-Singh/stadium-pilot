@@ -1,18 +1,14 @@
 import { VENUE } from "./data";
-import type { Gate, Section, Zone } from "./types";
+import type { Section, Zone } from "./types";
 
 /** Lookup helpers that turn user-facing names into zone ids. */
 
 const zonesById = new Map<string, Zone>(VENUE.zones.map((z) => [z.id, z]));
 const sectionsById = new Map<string, Section>(VENUE.sections.map((s) => [s.id, s]));
 
+/** Zone by exact id. */
 export function getZone(id: string): Zone | undefined {
   return zonesById.get(id);
-}
-
-/** The first gate serving a given zone, if any. */
-export function gateForZone(zoneId: string): Gate | undefined {
-  return VENUE.gates.find((gate) => gate.servesZones.includes(zoneId));
 }
 
 /**

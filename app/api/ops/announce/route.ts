@@ -6,10 +6,11 @@ import { guardPost } from "@/lib/api-guard";
 import { toErrorResponse } from "@/lib/http";
 import { LruCache } from "@/lib/cache";
 import { LOCALE_LABELS } from "@/lib/i18n";
+import { AI_CACHE_TTL_MS, ANNOUNCE_CACHE_ENTRIES } from "@/lib/constants";
 
 export const maxDuration = 30;
 
-const cache = new LruCache<AnnouncementSet>(200, 10 * 60 * 1000);
+const cache = new LruCache<AnnouncementSet>(ANNOUNCE_CACHE_ENTRIES, AI_CACHE_TTL_MS);
 
 export async function POST(req: Request): Promise<Response> {
   try {

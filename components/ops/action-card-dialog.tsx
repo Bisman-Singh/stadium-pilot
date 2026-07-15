@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import type { Incident } from "@/lib/sim";
 import { actionCardSchema, type ActionCard } from "@/lib/ai/schemas";
+import { COPY_FEEDBACK_MS } from "@/lib/constants";
 
 const SEVERITY_VAR: Record<ActionCard["severity"], string> = {
   low: "--d-moderate",
@@ -19,7 +20,7 @@ function CopyButton({ text }: { text: string }) {
         try {
           await navigator.clipboard?.writeText(text);
           setCopied(true);
-          window.setTimeout(() => setCopied(false), 1500);
+          window.setTimeout(() => setCopied(false), COPY_FEEDBACK_MS);
         } catch {
           // Clipboard unavailable; ignore silently.
         }

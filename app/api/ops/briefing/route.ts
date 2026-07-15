@@ -5,10 +5,11 @@ import { guardPost } from "@/lib/api-guard";
 import { errorResponse, toErrorResponse } from "@/lib/http";
 import { LruCache } from "@/lib/cache";
 import { VENUE, getZone } from "@/lib/venue";
+import { AI_CACHE_TTL_MS, BRIEFING_CACHE_ENTRIES } from "@/lib/constants";
 
 export const maxDuration = 30;
 
-const cache = new LruCache<string>(100, 10 * 60 * 1000);
+const cache = new LruCache<string>(BRIEFING_CACHE_ENTRIES, AI_CACHE_TTL_MS);
 
 export async function POST(req: Request): Promise<Response> {
   try {

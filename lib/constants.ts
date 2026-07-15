@@ -50,3 +50,12 @@ export const RATE_LIMITS = {
   ops: { limit: 8, windowMs: 60_000 },
   report: { limit: 3, windowMs: 60_000 },
 } as const;
+
+/** Server-side caching of repeatable AI answers (saves free-tier quota). */
+export const AI_CACHE_TTL_MS = 10 * 60 * 1000;
+export const ANNOUNCE_CACHE_ENTRIES = 200;
+export const BRIEFING_CACHE_ENTRIES = 100;
+
+/** UI timings. */
+export const OPS_POLL_MS = 5_000;
+export const COPY_FEEDBACK_MS = 1_500;

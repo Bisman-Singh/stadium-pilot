@@ -43,6 +43,7 @@ function clampMinute(minute: number): number {
   return Math.min(MATCH_WINDOW_MINUTES, Math.max(0, Math.round(minute)));
 }
 
+/** Aggregated match-day telemetry up to a minute, the input for AI reports. */
 export function telemetrySummary(upToMinuteRaw: number): TelemetrySummary {
   const upToMinute = clampMinute(upToMinuteRaw);
   const now = snapshot(upToMinute);

@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import type { CrowdSnapshot, Incident } from "@/lib/sim";
 import { telemetrySummary } from "@/lib/sim";
-import { MATCH_WINDOW_MINUTES } from "@/lib/constants";
+import { MATCH_WINDOW_MINUTES, OPS_POLL_MS } from "@/lib/constants";
 import { KpiRow, type Kpi } from "./kpi-row";
 import { ZoneHeatGrid } from "./zone-heat-grid";
 import { AlertFeed } from "./alert-feed";
@@ -31,7 +31,7 @@ export function OpsConsole() {
 
   const load = useCallback(async (targetMinute?: number) => {
     try {
-      const url = targetMinute != null ? `/api/crowd?minute=${targetMinute}` : "/api/crowd";
+      const url = targetMinute === undefined ? "/api/crowd" : `/api/crowd?minute=${targetMinute}`;
       const res = await fetch(url);
       if (!res.ok) throw new Error("crowd fetch failed");
       const json: CrowdData = await res.json();
@@ -49,7 +49,7 @@ export function OpsConsole() {
     const initial = setTimeout(() => void load(), 0);
     const interval = setInterval(() => {
       if (liveRef.current && document.visibilityState === "visible") void load();
-    }, 5000);
+    }, OPS_POLL_MS);
     return () => {
       clearTimeout(initial);
       clearInterval(interval);
@@ -125,6 +125,7 @@ export function OpsConsole() {
             value={Math.round(minute)}
             onChange={(event) => onScrub(Number(event.target.value))}
             aria-label="Match minute"
+            aria-valuetext={`minute ${Math.round(minute)}`}
             className="flex-1 accent-[var(--accent)]"
           />
           <span className="w-10 tabular-nums">{Math.round(minute)}&apos;</span>

@@ -149,13 +149,6 @@ export function snapshot(minute: number): CrowdSnapshot {
   return { minute, phase: phaseAt(minute), attendance, avgDensity, zones };
 }
 
-/** Zones at or above the critical density threshold, busiest first. */
-export function overCapacityZones(minute: number): ZoneDensity[] {
-  return snapshot(minute)
-    .zones.filter((z) => z.density >= DENSITY_ALERT)
-    .sort((a, b) => b.density - a.density);
-}
-
 /**
  * Maps wall-clock time to a looping match minute in [0, MATCH_WINDOW_MINUTES).
  * Pure: the caller supplies `nowMs` (e.g. Date.now()).

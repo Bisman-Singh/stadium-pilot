@@ -2,6 +2,7 @@ import { z } from "zod";
 
 /** Structured-output contracts. Validated at the generation layer with retry. */
 
+/** Contract for an incident action card: severity, actions, staffing, PA drafts. */
 export const actionCardSchema = z.object({
   severity: z.enum(["low", "medium", "high"]).describe("Overall severity for responders."),
   summary: z.string().describe("A one or two sentence situation summary."),
@@ -21,6 +22,7 @@ export const actionCardSchema = z.object({
 });
 export type ActionCard = z.infer<typeof actionCardSchema>;
 
+/** Contract for a multilingual PA announcement set, one entry per language. */
 export const announcementSchema = z.object({
   announcements: z
     .array(

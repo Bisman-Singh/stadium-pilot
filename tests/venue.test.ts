@@ -3,7 +3,7 @@ import { venueSchema } from "@/lib/venue/schema";
 import { findRoute } from "@/lib/venue/graph";
 import { findAmenities } from "@/lib/venue/amenities";
 import type { Zone } from "@/lib/venue/types";
-import { VENUE, route, searchAmenities, resolveLocation, gateForZone, getZone } from "@/lib/venue";
+import { VENUE, route, searchAmenities, resolveLocation, getZone } from "@/lib/venue";
 
 describe("venue data integrity", () => {
   it("passes the full schema including referential integrity", () => {
@@ -160,11 +160,6 @@ describe("location + gate resolution", () => {
 
   it("matches a lowercase zone id via the exact-name comparison", () => {
     expect(resolveLocation("cn")).toBe("CN");
-  });
-
-  it("finds a gate serving a zone", () => {
-    expect(gateForZone("N2")?.id).toBe("A");
-    expect(gateForZone("TH")?.id).toBe("H");
   });
 
   it("exposes zones by id", () => {

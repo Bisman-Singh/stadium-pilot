@@ -105,7 +105,7 @@ describe("utility surface", () => {
   });
 
   it("logs without throwing", () => {
-    const infoSpy = vi.spyOn(console, "log").mockImplementation(() => {});
+    const infoSpy = vi.spyOn(console, "info").mockImplementation(() => {});
     const errorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
     logEvent("scope", { a: 1 });
     logError("scope", new Error("boom"));

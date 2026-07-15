@@ -13,6 +13,7 @@ export interface RateResult {
   retryAfterSec: number;
 }
 
+/** Sliding-window counter for one limit; see `rateLimit` for the named pools. */
 export class RateLimiter {
   private readonly hits = new Map<string, number[]>();
 

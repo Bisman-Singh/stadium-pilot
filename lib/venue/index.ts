@@ -7,7 +7,7 @@ export { VENUE };
 export * from "./types";
 export type { RouteResult, RouteStep, RouteOptions } from "./graph";
 export type { AmenityQuery, RankedAmenity } from "./amenities";
-export { getZone, gateForZone, resolveLocation } from "./locate";
+export { getZone, resolveLocation } from "./locate";
 
 export function listZones(): Zone[] {
   return VENUE.zones;
