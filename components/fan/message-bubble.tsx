@@ -16,9 +16,7 @@ export function MessageBubble({ message }: { message: UIMessage }) {
       <div
         dir="auto"
         className={`max-w-[85%] whitespace-pre-wrap rounded-2xl px-4 py-2.5 text-[15px] leading-relaxed ${
-          isUser
-            ? "bg-accent text-accent-ink"
-            : "border border-line bg-panel text-ink"
+          isUser ? "bg-accent text-accent-ink" : "border border-line bg-panel text-ink"
         }`}
       >
         {text || <span className="text-muted">…</span>}

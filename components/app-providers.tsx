@@ -1,7 +1,14 @@
 "use client";
 
-import { createContext, useCallback, useContext, useEffect, useState, type ReactNode } from "react";
-import { DEFAULT_LOCALE, type Locale } from "@/lib/constants";
+import {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useSyncExternalStore,
+  type ReactNode,
+} from "react";
+import { DEFAULT_LOCALE, SUPPORTED_LOCALES, type Locale } from "@/lib/constants";
 import { dirFor, getDictionary, type Dictionary } from "@/lib/i18n";
 
 type Theme = "dark" | "light";
@@ -17,9 +24,6 @@ interface AppContextValue {
 
 const AppContext = createContext<AppContextValue | null>(null);
 
-const LOCALE_KEY = "sp-locale";
-const THEME_KEY = "sp-theme";
-
 /** localStorage can be absent (SSR, tests) or throw (private mode); never let it break the app. */
 function readStored(key: string): string | null {
   try {
@@ -33,27 +37,68 @@ function writeStored(key: string, value: string): void {
   try {
     globalThis.localStorage?.setItem(key, value);
   } catch {
-    // Storage unavailable; preference simply will not persist.
+    // Storage unavailable; the preference simply will not persist.
   }
 }
 
-/**
- * Holds locale and theme. State starts at the SSR defaults and only adopts
- * stored preferences after mount, so the first client render matches the server.
- */
-export function AppProviders({ children }: { children: ReactNode }) {
-  const [locale, setLocaleState] = useState<Locale>(DEFAULT_LOCALE);
-  const [theme, setTheme] = useState<Theme>("dark");
+interface PreferenceStore<T extends string> {
+  subscribe: (listener: () => void) => () => void;
+  read: () => T;
+  write: (next: T) => void;
+}
 
-  useEffect(() => {
-    /* eslint-disable react-hooks/set-state-in-effect -- SSR-safe: reading storage in a lazy initializer would cause a hydration mismatch */
-    const storedLocale = readStored(LOCALE_KEY) as Locale | null;
-    if (storedLocale) setLocaleState(storedLocale);
-    const storedTheme = readStored(THEME_KEY) as Theme | null;
-    if (storedTheme) setTheme(storedTheme);
-    else if (window.matchMedia?.("(prefers-color-scheme: light)").matches) setTheme("light");
-    /* eslint-enable react-hooks/set-state-in-effect */
-  }, []);
+/**
+ * A tiny external store per preference, consumed via useSyncExternalStore: the
+ * server render uses the default snapshot and the client adopts the stored
+ * value on hydration, with no mismatch and no state writes inside effects.
+ */
+function createPreferenceStore<T extends string>(
+  key: string,
+  isValid: (value: string) => value is T,
+  fallback: () => T,
+): PreferenceStore<T> {
+  let listeners: Array<() => void> = [];
+  let value: T | null = null;
+  return {
+    subscribe(listener) {
+      listeners.push(listener);
+      return () => {
+        listeners = listeners.filter((l) => l !== listener);
+      };
+    },
+    read() {
+      if (value === null) {
+        const raw = readStored(key);
+        value = raw !== null && isValid(raw) ? raw : fallback();
+      }
+      return value;
+    },
+    write(next) {
+      value = next;
+      writeStored(key, next);
+      for (const listener of listeners) listener();
+    },
+  };
+}
+
+const isLocale = (value: string): value is Locale => SUPPORTED_LOCALES.some((l) => l === value);
+const isTheme = (value: string): value is Theme => value === "dark" || value === "light";
+const prefersLight = (): boolean =>
+  globalThis.matchMedia?.("(prefers-color-scheme: light)").matches === true;
+
+const localeStore = createPreferenceStore<Locale>("sp-locale", isLocale, () => DEFAULT_LOCALE);
+const themeStore = createPreferenceStore<Theme>("sp-theme", isTheme, () =>
+  prefersLight() ? "light" : "dark",
+);
+
+/** Holds locale and theme, and mirrors them onto the document element. */
+export function AppProviders({ children }: { children: ReactNode }) {
+  const locale = useSyncExternalStore(
+    localeStore.subscribe,
+    localeStore.read,
+    () => DEFAULT_LOCALE,
+  );
+  const theme = useSyncExternalStore(themeStore.subscribe, themeStore.read, (): Theme => "dark");
 
   useEffect(() => {
     document.documentElement.lang = locale;
@@ -64,18 +109,11 @@ export function AppProviders({ children }: { children: ReactNode }) {
     document.documentElement.dataset.theme = theme;
   }, [theme]);
 
-  const setLocale = useCallback((next: Locale) => {
-    setLocaleState(next);
-    writeStored(LOCALE_KEY, next);
-  }, []);
-
-  const toggleTheme = useCallback(() => {
-    setTheme((current) => {
-      const next = current === "dark" ? "light" : "dark";
-      writeStored(THEME_KEY, next);
-      return next;
-    });
-  }, []);
+  const setLocale = useCallback((next: Locale) => localeStore.write(next), []);
+  const toggleTheme = useCallback(
+    () => themeStore.write(themeStore.read() === "dark" ? "light" : "dark"),
+    [],
+  );
 
   const value: AppContextValue = {
     locale,

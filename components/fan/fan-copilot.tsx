@@ -98,7 +98,10 @@ export function FanCopilot() {
       </div>
 
       {error && (
-        <div role="alert" className="flex items-center justify-between rounded-lg border border-danger/50 bg-danger/10 px-4 py-2 text-sm">
+        <div
+          role="alert"
+          className="flex items-center justify-between rounded-lg border border-danger/50 bg-danger/10 px-4 py-2 text-sm"
+        >
           <span>{dict.fanError}</span>
           <button
             type="button"

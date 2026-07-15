@@ -9,13 +9,7 @@ import { fanTools, zoneName, formatRoute, crowdReport } from "@/lib/ai/tools";
 import { LruCache } from "@/lib/cache";
 import { RateLimiter } from "@/lib/rate-limit";
 import { clientIp } from "@/lib/http";
-
-type ExecFn = (input: unknown, options: unknown) => Promise<unknown>;
-async function runTool(tool: unknown, input: unknown): Promise<Record<string, unknown>> {
-  const exec = (tool as { execute?: ExecFn }).execute;
-  if (!exec) throw new Error("no execute");
-  return (await exec(input, { toolCallId: "t", messages: [] })) as Record<string, unknown>;
-}
+import { runTool } from "./helpers";
 
 describe("incident ordering tiebreak", () => {
   it("orders equal-severity incidents by start time", () => {
@@ -76,21 +70,26 @@ describe("amenity in the reference zone", () => {
 
 describe("tool fallback branches", () => {
   it("findAmenity without a location returns notes and null distances", async () => {
-    const result = await runTool(fanTools.findAmenity, { types: ["first-aid"] });
-    const amenities = result.amenities as { note: string | null; walkMinutes: number | null }[];
-    expect(amenities.length).toBeGreaterThan(0);
-    expect(amenities.some((a) => a.note !== null)).toBe(true);
-    expect(amenities.every((a) => a.walkMinutes === null)).toBe(true);
+    const result = await runTool<{
+      amenities: { note: string | null; walkMinutes: number | null }[];
+      nearZone: string | null;
+    }>(fanTools.findAmenity, { types: ["first-aid"] });
+    expect(result.amenities.length).toBeGreaterThan(0);
+    expect(result.amenities.some((a) => a.note !== null)).toBe(true);
+    expect(result.amenities.every((a) => a.walkMinutes === null)).toBe(true);
     expect(result.nearZone).toBeNull();
   });
 
   it("getTransit with no filters returns every option", async () => {
-    const result = await runTool(fanTools.getTransit, {});
-    expect((result.options as unknown[]).length).toBe(VENUE.transit.length);
+    const result = await runTool<{ options: unknown[] }>(fanTools.getTransit, {});
+    expect(result.options.length).toBe(VENUE.transit.length);
   });
 
   it("getRoute errors on an unknown origin", async () => {
-    const result = await runTool(fanTools.getRoute, { from: "nowhere-place", to: "PL" });
+    const result = await runTool<{ error: string }>(fanTools.getRoute, {
+      from: "nowhere-place",
+      to: "PL",
+    });
     expect(result.error).toContain("nowhere-place");
   });
 });

@@ -27,10 +27,13 @@ export function MarkdownLite({ text }: { text: string }) {
     const line = raw.trimEnd();
     if (/^#{1,6}\s/.test(line)) {
       flushList(`list-${index}`);
-      const level = (line.match(/^#+/)?.[0].length ?? 1);
+      const level = line.match(/^#+/)?.[0].length ?? 1;
       const content = line.replace(/^#+\s/, "");
       blocks.push(
-        <p key={index} className={`mt-3 ${level <= 1 ? "text-lg font-bold" : "text-base font-semibold"}`}>
+        <p
+          key={index}
+          className={`mt-3 ${level <= 1 ? "text-lg font-bold" : "text-base font-semibold"}`}
+        >
           {renderInline(content)}
         </p>,
       );
@@ -53,11 +56,13 @@ export function MarkdownLite({ text }: { text: string }) {
 }
 
 function renderInline(text: string): ReactNode {
-  return text.split(/(\*\*[^*]+\*\*)/g).map((part, i) =>
-    part.startsWith("**") && part.endsWith("**") ? (
-      <strong key={i}>{part.slice(2, -2)}</strong>
-    ) : (
-      <Fragment key={i}>{part}</Fragment>
-    ),
-  );
+  return text
+    .split(/(\*\*[^*]+\*\*)/g)
+    .map((part, i) =>
+      part.startsWith("**") && part.endsWith("**") ? (
+        <strong key={i}>{part.slice(2, -2)}</strong>
+      ) : (
+        <Fragment key={i}>{part}</Fragment>
+      ),
+    );
 }

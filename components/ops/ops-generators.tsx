@@ -67,7 +67,10 @@ export function OpsGenerators({ minute }: { minute: number }) {
 
   return (
     <div className="space-y-6">
-      <section aria-label="Volunteer briefing generator" className="rounded-xl border border-line bg-surface p-4">
+      <section
+        aria-label="Volunteer briefing generator"
+        className="rounded-xl border border-line bg-surface p-4"
+      >
         <h2 className="text-lg font-semibold">Volunteer briefing</h2>
         <div className="mt-3 flex flex-wrap gap-3">
           <label className="text-sm">
@@ -119,9 +122,14 @@ export function OpsGenerators({ minute }: { minute: number }) {
         )}
       </section>
 
-      <section aria-label="Match operations report" className="rounded-xl border border-line bg-surface p-4">
+      <section
+        aria-label="Match operations report"
+        className="rounded-xl border border-line bg-surface p-4"
+      >
         <h2 className="text-lg font-semibold">Match operations report</h2>
-        <p className="mt-1 text-sm text-muted">Summarises the match up to minute {Math.round(minute)}.</p>
+        <p className="mt-1 text-sm text-muted">
+          Summarises the match up to minute {Math.round(minute)}.
+        </p>
         <div className="mt-3 flex gap-2">
           <button
             type="button"

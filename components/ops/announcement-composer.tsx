@@ -37,8 +37,8 @@ export function AnnouncementComposer() {
         body: JSON.stringify({ topic: topic.trim(), tone, languages }),
       });
       if (!res.ok) throw new Error("announce failed");
-      const json = await res.json();
-      setItems((json.announcements ?? []) as AnnouncementItem[]);
+      const json: { announcements?: AnnouncementItem[] } = await res.json();
+      setItems(json.announcements ?? []);
     } catch {
       setFailed(true);
     } finally {
@@ -47,7 +47,10 @@ export function AnnouncementComposer() {
   };
 
   return (
-    <section aria-label="Multilingual announcement composer" className="rounded-xl border border-line bg-surface p-4">
+    <section
+      aria-label="Multilingual announcement composer"
+      className="rounded-xl border border-line bg-surface p-4"
+    >
       <h2 className="text-lg font-semibold">Multilingual PA announcement</h2>
       <form onSubmit={submit} className="mt-3 space-y-3">
         <label className="block text-sm">
@@ -64,7 +67,11 @@ export function AnnouncementComposer() {
           <span className="text-muted">Tone</span>
           <select
             value={tone}
-            onChange={(event) => setTone(event.target.value as (typeof TONES)[number])}
+            onChange={(event) => {
+              // The option list is built from TONES, so this always matches.
+              const next = TONES.find((t) => t === event.target.value);
+              if (next) setTone(next);
+            }}
             className="mt-1 w-full rounded-md border border-line bg-panel px-3 py-2 text-ink"
           >
             {TONES.map((t) => (

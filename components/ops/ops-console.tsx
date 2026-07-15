@@ -34,7 +34,7 @@ export function OpsConsole() {
       const url = targetMinute != null ? `/api/crowd?minute=${targetMinute}` : "/api/crowd";
       const res = await fetch(url);
       if (!res.ok) throw new Error("crowd fetch failed");
-      const json = (await res.json()) as CrowdData;
+      const json: CrowdData = await res.json();
       setData(json);
       setMinute(json.snapshot.minute);
       setFailed(false);
@@ -44,12 +44,16 @@ export function OpsConsole() {
   }, []);
 
   useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect -- async fetch; state updates run after await, not synchronously
-    load();
+    // The fetch is an external-system sync: schedule it (immediate task +
+    // refresh interval) so the effect body itself stays free of state writes.
+    const initial = setTimeout(() => void load(), 0);
     const interval = setInterval(() => {
-      if (liveRef.current && document.visibilityState === "visible") load();
+      if (liveRef.current && document.visibilityState === "visible") void load();
     }, 5000);
-    return () => clearInterval(interval);
+    return () => {
+      clearTimeout(initial);
+      clearInterval(interval);
+    };
   }, [load]);
 
   const onScrub = (value: number) => {
@@ -82,8 +86,16 @@ export function OpsConsole() {
           value: String(critical),
           tone: critical > 0 ? "danger" : "default",
         },
-        { label: "Water refills", value: telemetry.sustainability.waterRefills.toLocaleString(), tone: "accent" },
-        { label: "Waste diverted", value: `${telemetry.sustainability.wasteDivertedPct}%`, tone: "accent" },
+        {
+          label: "Water refills",
+          value: telemetry.sustainability.waterRefills.toLocaleString(),
+          tone: "accent",
+        },
+        {
+          label: "Waste diverted",
+          value: `${telemetry.sustainability.wasteDivertedPct}%`,
+          tone: "accent",
+        },
       ]
     : [];
 
@@ -95,7 +107,9 @@ export function OpsConsole() {
           <p className="text-muted">Live crowd intelligence and AI decision support.</p>
         </div>
         <div className="text-sm text-muted">
-          <span className="font-semibold text-ink">{formatPhase(snapshot?.phase ?? "pre-gates")}</span>
+          <span className="font-semibold text-ink">
+            {formatPhase(snapshot?.phase ?? "pre-gates")}
+          </span>
           {" · match minute "}
           {Math.round(minute)}
         </div>

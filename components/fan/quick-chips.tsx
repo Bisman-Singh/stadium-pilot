@@ -21,7 +21,10 @@ export function QuickChips({ onPick, disabled }: QuickChipsProps) {
       label: dict.chipAccessible,
       text: "I use a wheelchair. Please give me a step-free route from the Transit Hub to seat 224.",
     },
-    { label: dict.chipTransit, text: "What is the best way to get home after the match right now?" },
+    {
+      label: dict.chipTransit,
+      text: "What is the best way to get home after the match right now?",
+    },
     {
       label: dict.chipRecycling,
       text: "Where are the nearest recycling and water refill points to the Central Plaza?",

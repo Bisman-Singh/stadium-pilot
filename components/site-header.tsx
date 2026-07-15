@@ -18,8 +18,7 @@ export function SiteHeader() {
     { href: "/about", label: dict.navAbout },
   ];
 
-  const isActive = (href: string) =>
-    href === "/" ? pathname === "/" : pathname.startsWith(href);
+  const isActive = (href: string) => (href === "/" ? pathname === "/" : pathname.startsWith(href));
 
   return (
     <header className="border-b border-line bg-surface/80 backdrop-blur">

@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import type { Incident } from "@/lib/sim";
-import type { ActionCard } from "@/lib/ai/schemas";
+import { actionCardSchema, type ActionCard } from "@/lib/ai/schemas";
 
 const SEVERITY_VAR: Record<ActionCard["severity"], string> = {
   low: "--d-moderate",
@@ -32,7 +32,13 @@ function CopyButton({ text }: { text: string }) {
 }
 
 /** Accessible modal that requests and displays an AI action card for an incident. */
-export function ActionCardDialog({ incident, onClose }: { incident: Incident; onClose: () => void }) {
+export function ActionCardDialog({
+  incident,
+  onClose,
+}: {
+  incident: Incident;
+  onClose: () => void;
+}) {
   const [card, setCard] = useState<ActionCard | null>(null);
   const [loading, setLoading] = useState(true);
   const [failed, setFailed] = useState(false);
@@ -51,8 +57,13 @@ export function ActionCardDialog({ incident, onClose }: { incident: Incident; on
           body: JSON.stringify({ incidentId: incident.id }),
         });
         if (!res.ok) throw new Error("action failed");
-        const json = await res.json();
-        if (!cancelled) setCard(json.card as ActionCard);
+        const json: { card?: unknown } = await res.json();
+        // Re-validate at the client boundary; a malformed card shows the error state.
+        const parsed = actionCardSchema.safeParse(json.card);
+        if (!cancelled) {
+          if (parsed.success) setCard(parsed.data);
+          else setFailed(true);
+        }
       } catch {
         if (!cancelled) setFailed(true);
       } finally {
@@ -65,7 +76,8 @@ export function ActionCardDialog({ incident, onClose }: { incident: Incident; on
   }, [incident.id]);
 
   useEffect(() => {
-    const previouslyFocused = document.activeElement as HTMLElement | null;
+    const active = document.activeElement;
+    const previouslyFocused = active instanceof HTMLElement ? active : null;
     dialogRef.current?.focus();
 
     const onKeyDown = (event: KeyboardEvent) => {
@@ -110,7 +122,12 @@ export function ActionCardDialog({ incident, onClose }: { incident: Incident; on
           <h2 id={titleId} className="text-lg font-bold">
             AI action card
           </h2>
-          <button type="button" onClick={onClose} aria-label="Close" className="text-muted hover:text-ink">
+          <button
+            type="button"
+            onClick={onClose}
+            aria-label="Close"
+            className="text-muted hover:text-ink"
+          >
             ✕
           </button>
         </div>
@@ -127,7 +144,10 @@ export function ActionCardDialog({ incident, onClose }: { incident: Incident; on
           <div className="mt-4 space-y-4">
             <span
               className="inline-block rounded-full border px-2.5 py-0.5 text-xs font-semibold uppercase"
-              style={{ color: `var(${SEVERITY_VAR[card.severity]})`, borderColor: `var(${SEVERITY_VAR[card.severity]})` }}
+              style={{
+                color: `var(${SEVERITY_VAR[card.severity]})`,
+                borderColor: `var(${SEVERITY_VAR[card.severity]})`,
+              }}
             >
               {card.severity} severity
             </span>

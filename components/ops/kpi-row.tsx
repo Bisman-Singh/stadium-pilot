@@ -12,7 +12,11 @@ export function KpiRow({ items }: { items: Kpi[] }) {
           <dt className="text-xs uppercase tracking-wide text-muted">{kpi.label}</dt>
           <dd
             className={`mt-1 text-xl font-bold tabular-nums ${
-              kpi.tone === "danger" ? "text-danger" : kpi.tone === "accent" ? "text-accent" : "text-ink"
+              kpi.tone === "danger"
+                ? "text-danger"
+                : kpi.tone === "accent"
+                  ? "text-accent"
+                  : "text-ink"
             }`}
           >
             {kpi.value}

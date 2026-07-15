@@ -58,21 +58,28 @@ const incident: Incident = {
 
 describe("AlertFeed and action card", () => {
   beforeEach(() => {
-    global.fetch = vi.fn(
-      async () =>
-        new Response(
-          JSON.stringify({
-            card: {
-              severity: "high",
-              summary: "Congestion is building.",
-              actions: ["Open east doors", "Send stewards"],
-              staffingMove: "Move two stewards from Gate B.",
-              paDraft: { en: "Please use other exits.", es: "Usen otras salidas.", fr: "Utilisez d'autres sorties." },
-            },
-          }),
-          { status: 200, headers: { "content-type": "application/json" } },
-        ),
-    ) as unknown as typeof fetch;
+    vi.stubGlobal(
+      "fetch",
+      vi.fn(
+        async () =>
+          new Response(
+            JSON.stringify({
+              card: {
+                severity: "high",
+                summary: "Congestion is building.",
+                actions: ["Open east doors", "Send stewards"],
+                staffingMove: "Move two stewards from Gate B.",
+                paDraft: {
+                  en: "Please use other exits.",
+                  es: "Usen otras salidas.",
+                  fr: "Utilisez d'autres sorties.",
+                },
+              },
+            }),
+            { status: 200, headers: { "content-type": "application/json" } },
+          ),
+      ),
+    );
   });
 
   it("opens an accessible dialog and shows the generated action card", async () => {

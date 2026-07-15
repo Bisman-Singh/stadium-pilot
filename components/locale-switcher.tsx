@@ -1,6 +1,6 @@
 "use client";
 
-import { SUPPORTED_LOCALES, type Locale } from "@/lib/constants";
+import { SUPPORTED_LOCALES } from "@/lib/constants";
 import { LOCALE_LABELS } from "@/lib/i18n";
 import { useApp } from "./app-providers";
 
@@ -12,7 +12,11 @@ export function LocaleSwitcher() {
       <select
         aria-label={dict.langLabel}
         value={locale}
-        onChange={(event) => setLocale(event.target.value as Locale)}
+        onChange={(event) => {
+          // The option list is built from SUPPORTED_LOCALES, so this always matches.
+          const next = SUPPORTED_LOCALES.find((code) => code === event.target.value);
+          if (next) setLocale(next);
+        }}
         className="rounded-md border border-line bg-surface px-2 py-1 text-ink"
       >
         {SUPPORTED_LOCALES.map((code) => (
