@@ -60,11 +60,11 @@ instances agree and the demo is perfectly reproducible.
 
 Generative AI is core to the product, not a bolt-on.
 
-- **Fan copilot** streams responses from Gemini (`gemini-2.5-flash`) with a set
-  of five grounded tools: find amenities, get a route, check crowd levels, get
-  transit options, and get event facts. The model decides which to call, chains
-  them when needed, and answers in the user's language. See `lib/ai/tools.ts` and
-  `app/api/chat/route.ts`.
+- **Fan copilot** streams responses from Gemini (`gemini-3.1-flash-lite`) with a
+  set of five grounded tools: find amenities, get a route, check crowd levels,
+  get transit options, and get event facts. The model decides which to call,
+  chains them when needed, and answers in the user's language. See
+  `lib/ai/tools.ts` and `app/api/chat/route.ts`.
 - **Operations drafting** uses schema-constrained structured output to generate
   public announcements, internal action plans, and shift briefings from the
   current incident and crowd state. Every generation is validated against a Zod
@@ -98,7 +98,7 @@ cp .env.example .env.local
 npm run dev        # http://localhost:3000
 
 # 4. Verify
-npm run test:coverage   # 122 tests, 100% coverage
+npm run test:coverage   # 134 tests, 100% coverage
 npm run typecheck       # no type errors
 npm run lint            # no lint errors
 npm run build           # production build
