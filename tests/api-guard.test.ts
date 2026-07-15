@@ -71,4 +71,18 @@ describe("chat message envelope validation", () => {
     expect(chatBodySchema.safeParse(body([{ role: "tool", parts: [] }])).success).toBe(false);
     expect(chatBodySchema.safeParse(body([{ role: "user", parts: "text" }])).success).toBe(false);
   });
+
+  it("caps the combined text length of a message", () => {
+    const long = "x".repeat(2001);
+    expect(
+      chatBodySchema.safeParse(
+        body([{ id: "1", role: "user", parts: [{ type: "text", text: long }] }]),
+      ).success,
+    ).toBe(false);
+    // Non-text and malformed parts contribute nothing to the length.
+    const mixed = [
+      { id: "1", role: "user", parts: [{ type: "step-start" }, { type: "text", text: 7 }] },
+    ];
+    expect(chatBodySchema.safeParse(body(mixed)).success).toBe(true);
+  });
 });

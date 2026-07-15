@@ -1,6 +1,11 @@
 import { z } from "zod";
 import type { UIMessage } from "ai";
-import { MATCH_WINDOW_MINUTES, MAX_CHAT_MESSAGES, SUPPORTED_LOCALES } from "./constants";
+import {
+  MATCH_WINDOW_MINUTES,
+  MAX_CHAT_MESSAGES,
+  MAX_MESSAGE_CHARS,
+  SUPPORTED_LOCALES,
+} from "./constants";
 
 /** Zod schemas for every API input. Parsing failures become 400 responses. */
 
@@ -19,12 +24,26 @@ function isUIMessage(value: unknown): value is UIMessage {
   return isKnownRole && Array.isArray(value.parts);
 }
 
+/** Combined length of a message's text parts, for the per-message cap. */
+function textLength(message: UIMessage): number {
+  return message.parts.reduce(
+    (sum, part) => sum + ("text" in part && typeof part.text === "string" ? part.text.length : 0),
+    0,
+  );
+}
+
 /**
- * The chat envelope. Message counts and roles are bounded here; the body-size
- * cap in `readJsonBody` bounds total content.
+ * The chat envelope. Message counts, roles, and per-message text length are
+ * bounded here; the body-size cap in `readJsonBody` bounds total content.
  */
 export const chatBodySchema = z.object({
-  messages: z.array(z.custom<UIMessage>(isUIMessage)).min(1).max(MAX_CHAT_MESSAGES),
+  messages: z
+    .array(z.custom<UIMessage>(isUIMessage))
+    .min(1)
+    .max(MAX_CHAT_MESSAGES)
+    .refine((messages) => messages.every((m) => textLength(m) <= MAX_MESSAGE_CHARS), {
+      message: "A message exceeds the maximum length.",
+    }),
   locationZone: z.string().max(40).optional(),
   stepFreeOnly: z.boolean().optional(),
   locale: localeSchema.optional(),

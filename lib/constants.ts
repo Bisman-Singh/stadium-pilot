@@ -40,6 +40,7 @@ export const CHAT_MAX_STEPS = 6;
 /** Request guards. */
 export const MAX_BODY_BYTES = 16_384;
 export const MAX_CHAT_MESSAGES = 40;
+export const MAX_MESSAGE_CHARS = 2_000;
 
 /** Per-IP rate limits: { limit, windowMs }. */
 export const RATE_LIMITS = {
