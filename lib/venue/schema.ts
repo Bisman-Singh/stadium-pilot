@@ -101,7 +101,13 @@ export const venueSchema = z
     data.zones.forEach((zone, zi) => {
       zone.edges.forEach((edge, ei) => {
         if (!zoneIds.has(edge.to)) {
-          addIssue(`edge target "${edge.to}" is not a known zone`, ["zones", zi, "edges", ei, "to"]);
+          addIssue(`edge target "${edge.to}" is not a known zone`, [
+            "zones",
+            zi,
+            "edges",
+            ei,
+            "to",
+          ]);
         }
         if (edge.to === zone.id) {
           addIssue(`zone "${zone.id}" has a self-edge`, ["zones", zi, "edges", ei]);
@@ -111,7 +117,11 @@ export const venueSchema = z
 
     data.amenities.forEach((a, i) => {
       if (!zoneIds.has(a.zoneId)) {
-        addIssue(`amenity "${a.id}" references unknown zone "${a.zoneId}"`, ["amenities", i, "zoneId"]);
+        addIssue(`amenity "${a.id}" references unknown zone "${a.zoneId}"`, [
+          "amenities",
+          i,
+          "zoneId",
+        ]);
       }
     });
 
@@ -125,7 +135,11 @@ export const venueSchema = z
 
     data.sections.forEach((s, i) => {
       if (!zoneIds.has(s.zoneId)) {
-        addIssue(`section "${s.id}" references unknown zone "${s.zoneId}"`, ["sections", i, "zoneId"]);
+        addIssue(`section "${s.id}" references unknown zone "${s.zoneId}"`, [
+          "sections",
+          i,
+          "zoneId",
+        ]);
       }
     });
 
@@ -143,5 +157,5 @@ export const venueSchema = z
 
 /** Parses and validates raw data, throwing a descriptive error on any problem. */
 export function validateVenue(data: unknown): VenueData {
-  return venueSchema.parse(data) as VenueData;
+  return venueSchema.parse(data);
 }

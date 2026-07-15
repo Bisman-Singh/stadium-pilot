@@ -1,3 +1,5 @@
+import { must } from "./must";
+
 /**
  * A tiny in-memory LRU cache with per-entry TTL. Used to serve repeated,
  * non-conversational AI answers (announcements, briefings) without re-spending
@@ -35,8 +37,7 @@ export class LruCache<T> {
     this.store.set(key, { value, expiresAt: nowMs + this.ttlMs });
     // size > maxEntries (>= 0) implies a non-empty store, so a key always exists.
     while (this.store.size > this.maxEntries) {
-      const oldest = this.store.keys().next().value as string;
-      this.store.delete(oldest);
+      this.store.delete(must(this.store.keys().next().value, "oldest cache key"));
     }
   }
 

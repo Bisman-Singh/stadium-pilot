@@ -8,11 +8,7 @@ import {
   type UIMessage,
 } from "ai";
 import type { z } from "zod";
-import {
-  CHAT_MAX_OUTPUT_TOKENS,
-  CHAT_MAX_STEPS,
-  STRUCTURED_MAX_OUTPUT_TOKENS,
-} from "../constants";
+import { CHAT_MAX_OUTPUT_TOKENS, CHAT_MAX_STEPS, STRUCTURED_MAX_OUTPUT_TOKENS } from "../constants";
 import { fanTools } from "./tools";
 
 /**
@@ -27,6 +23,21 @@ const FALLBACK_MODEL = "gemini-2.0-flash";
 
 // Disables Gemini 2.5 "thinking" to cut latency and token spend on the free tier.
 const NO_THINKING = { google: { thinkingConfig: { thinkingBudget: 0 } } };
+
+interface ModelAttempt {
+  modelId: string;
+  /** Thinking config only applies to the primary (2.5-family) model. */
+  providerOptions?: typeof NO_THINKING;
+}
+
+/** Runs a generation against the primary model, retrying once on the fallback. */
+async function withModelFallback<T>(run: (attempt: ModelAttempt) => Promise<T>): Promise<T> {
+  try {
+    return await run({ modelId: PRIMARY_MODEL, providerOptions: NO_THINKING });
+  } catch {
+    return run({ modelId: FALLBACK_MODEL });
+  }
+}
 
 /** Streams a grounded, tool-using fan chat response. */
 export async function streamFanChat(system: string, messages: UIMessage[]) {
@@ -51,50 +62,31 @@ export async function generateStructured<T>(
   system: string,
   prompt: string,
 ): Promise<T> {
-  try {
+  return withModelFallback(async ({ modelId, providerOptions }) => {
     const { output } = await generateText({
-      model: google(PRIMARY_MODEL),
+      model: google(modelId),
       system,
       prompt,
       output: Output.object({ schema }),
       temperature: 0.3,
       maxOutputTokens: STRUCTURED_MAX_OUTPUT_TOKENS,
-      providerOptions: NO_THINKING,
+      providerOptions,
     });
-    return output as T;
-  } catch {
-    const { output } = await generateText({
-      model: google(FALLBACK_MODEL),
-      system,
-      prompt,
-      output: Output.object({ schema }),
-      temperature: 0.3,
-      maxOutputTokens: STRUCTURED_MAX_OUTPUT_TOKENS,
-    });
-    return output as T;
-  }
+    return output;
+  });
 }
 
 /** Generates markdown/prose, falling back to a second model on error. */
 export async function generateProse(system: string, prompt: string): Promise<string> {
-  try {
+  return withModelFallback(async ({ modelId, providerOptions }) => {
     const { text } = await generateText({
-      model: google(PRIMARY_MODEL),
+      model: google(modelId),
       system,
       prompt,
       temperature: 0.4,
       maxOutputTokens: STRUCTURED_MAX_OUTPUT_TOKENS,
-      providerOptions: NO_THINKING,
+      providerOptions,
     });
     return text;
-  } catch {
-    const { text } = await generateText({
-      model: google(FALLBACK_MODEL),
-      system,
-      prompt,
-      temperature: 0.4,
-      maxOutputTokens: STRUCTURED_MAX_OUTPUT_TOKENS,
-    });
-    return text;
-  }
+  });
 }

@@ -1,4 +1,5 @@
 import { z } from "zod";
+import type { UIMessage } from "ai";
 import { MATCH_WINDOW_MINUTES, MAX_CHAT_MESSAGES, SUPPORTED_LOCALES } from "./constants";
 
 /** Zod schemas for every API input. Parsing failures become 400 responses. */
@@ -6,19 +7,24 @@ import { MATCH_WINDOW_MINUTES, MAX_CHAT_MESSAGES, SUPPORTED_LOCALES } from "./co
 export const localeSchema = z.enum(SUPPORTED_LOCALES);
 
 /**
- * The chat envelope. Message parts are validated loosely (the AI SDK owns their
- * exact shape); we bound the count and roles, and the body-size cap in
- * `readJsonBody` bounds total content.
+ * Structural envelope check for one chat message. The AI SDK owns the full
+ * UIMessage type; the API boundary verifies the parts it relies on so no cast
+ * is needed downstream.
+ */
+function isUIMessage(value: unknown): value is UIMessage {
+  if (typeof value !== "object" || value === null) return false;
+  if (!("role" in value) || !("parts" in value)) return false;
+  const isKnownRole =
+    value.role === "user" || value.role === "assistant" || value.role === "system";
+  return isKnownRole && Array.isArray(value.parts);
+}
+
+/**
+ * The chat envelope. Message counts and roles are bounded here; the body-size
+ * cap in `readJsonBody` bounds total content.
  */
 export const chatBodySchema = z.object({
-  messages: z
-    .array(
-      z
-        .object({ role: z.enum(["user", "assistant", "system"]) })
-        .passthrough(),
-    )
-    .min(1)
-    .max(MAX_CHAT_MESSAGES),
+  messages: z.array(z.custom<UIMessage>(isUIMessage)).min(1).max(MAX_CHAT_MESSAGES),
   locationZone: z.string().max(40).optional(),
   stepFreeOnly: z.boolean().optional(),
   locale: localeSchema.optional(),

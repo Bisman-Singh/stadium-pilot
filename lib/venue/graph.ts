@@ -1,5 +1,6 @@
 import type { EdgeKind, Zone } from "./types";
 import { LIFT_WAIT_MIN, STAIRS_PENALTY_MIN, WALK_METRES_PER_MIN } from "../constants";
+import { must } from "../must";
 
 /**
  * Deterministic shortest-path routing over the venue zone graph. Edges are
@@ -103,27 +104,34 @@ export function findRoute(
     visited.add(current);
 
     // `current` and every `edge.to` are zone ids seeded into both maps at setup.
-    for (const edge of adjacency.get(current)!) {
+    for (const edge of must(adjacency.get(current), "adjacency list")) {
       if (visited.has(edge.to)) continue;
       const candidate = best + edge.metres;
-      if (candidate < distance.get(edge.to)!) {
+      if (candidate < must(distance.get(edge.to), "edge distance")) {
         distance.set(edge.to, candidate);
         previous.set(edge.to, { node: current, edge });
       }
     }
   }
 
-  if (distance.get(toId)! === Infinity) return null;
+  if (must(distance.get(toId), "target distance") === Infinity) return null;
 
   const steps: RouteStep[] = [];
   let cursor = toId;
   while (cursor !== fromId) {
     // A finite distance to `toId` guarantees a predecessor chain back to `fromId`.
-    const step = previous.get(cursor) as { node: string; edge: Adjacent };
+    const step = must(previous.get(cursor), "predecessor");
     steps.unshift({ from: step.node, to: cursor, kind: step.edge.kind, metres: step.edge.metres });
     cursor = step.node;
   }
 
   const totalMetres = steps.reduce((sum, step) => sum + step.metres, 0);
-  return { from: fromId, to: toId, steps, totalMetres, estMinutes: estimateMinutes(steps), stepFree };
+  return {
+    from: fromId,
+    to: toId,
+    steps,
+    totalMetres,
+    estMinutes: estimateMinutes(steps),
+    stepFree,
+  };
 }

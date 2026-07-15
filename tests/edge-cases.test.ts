@@ -4,14 +4,9 @@ import { LruCache } from "@/lib/cache";
 import { RateLimiter } from "@/lib/rate-limit";
 import { isSameOrigin } from "@/lib/http";
 import { logEvent, logError } from "@/lib/log";
+import { must } from "@/lib/must";
 import { fanTools } from "@/lib/ai/tools";
-
-type ExecFn = (input: unknown, options: unknown) => Promise<unknown>;
-async function runTool(tool: unknown, input: unknown): Promise<Record<string, unknown>> {
-  const exec = (tool as { execute?: ExecFn }).execute;
-  if (!exec) throw new Error("no execute");
-  return (await exec(input, { toolCallId: "t", messages: [] })) as Record<string, unknown>;
-}
+import { runTool } from "./helpers";
 
 const baseVenue = {
   event: {
@@ -24,7 +19,14 @@ const baseVenue = {
     localTimezone: "local",
   },
   zones: [
-    { id: "A", name: "Alpha", role: "plaza", level: 1, capacity: 10, edges: [{ to: "B", kind: "walkway", metres: 10 }] },
+    {
+      id: "A",
+      name: "Alpha",
+      role: "plaza",
+      level: 1,
+      capacity: 10,
+      edges: [{ to: "B", kind: "walkway", metres: 10 }],
+    },
     { id: "B", name: "Bravo", role: "stand", level: 1, capacity: 10, edges: [] },
   ],
   gates: [{ id: "G", name: "Gate", servesZones: ["A"], throughputPerMin: 100 }],
@@ -95,6 +97,13 @@ describe("utility surface", () => {
     expect(isSameOrigin(req)).toBe(false);
   });
 
+  it("must returns present values and fails loudly on undefined", () => {
+    expect(must(5, "number")).toBe(5);
+    expect(() => must(undefined, "missing thing")).toThrow(
+      "Invariant violated: missing missing thing",
+    );
+  });
+
   it("logs without throwing", () => {
     const infoSpy = vi.spyOn(console, "log").mockImplementation(() => {});
     const errorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
@@ -110,7 +119,9 @@ describe("utility surface", () => {
 
 describe("getCrowd for a specific location", () => {
   it("returns an area-level reading when the location resolves", async () => {
-    const result = await runTool(fanTools.getCrowd, { location: "North Concourse" });
+    const result = await runTool<{ area: string; occupancyPct: number }>(fanTools.getCrowd, {
+      location: "North Concourse",
+    });
     expect(result.area).toBe("North Concourse");
     expect(typeof result.occupancyPct).toBe("number");
   });
