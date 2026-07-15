@@ -70,7 +70,7 @@ Generative AI is core to the product, not a bolt-on.
   current incident and crowd state. Every generation is validated against a Zod
   schema before it reaches the UI, with a typed fallback if the model drifts. See
   `lib/ai/client.ts` and the `app/api/ops/*` routes.
-- A model fallback (`gemini-3-flash-preview`), disabled "thinking", output token caps,
+- Per-task model fallbacks (`gemini-2.5-pro` for structured output, `gemini-3-flash-preview` for prose), disabled "thinking", per-attempt timeouts, output token caps,
   and an LRU cache keep the experience fast and within free-tier limits.
 
 ## Judging criteria, and where to verify each
