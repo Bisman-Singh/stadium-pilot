@@ -1,0 +1,100 @@
+@import "tailwindcss";
+
+/*
+ * StadiumPilot design tokens — a "broadcast match-day" identity:
+ * floodlit near-black base, pitch green, one hot amber accent, and a
+ * cool-to-hot density scale used by the crowd heat grid. Both themes styled.
+ */
+:root {
+  --base: #0a0f0d;
+  --surface: #101815;
+  --panel: #16211d;
+  --line: #24332c;
+  --ink: #e9f1ec;
+  --muted: #9db0a7;
+  --accent: #f5a524;
+  --accent-ink: #1a1206;
+  --pitch: #22c55e;
+  --danger: #f87171;
+
+  --d-low: #16a34a;
+  --d-moderate: #eab308;
+  --d-high: #f97316;
+  --d-critical: #ef4444;
+
+  --shadow: 0 1px 2px rgba(0, 0, 0, 0.4), 0 8px 24px rgba(0, 0, 0, 0.25);
+}
+
+:root[data-theme="light"] {
+  --base: #eef2f0;
+  --surface: #ffffff;
+  --panel: #f4f7f5;
+  --line: #d6e0da;
+  --ink: #0e1613;
+  --muted: #46574f;
+  --accent: #b45309;
+  --accent-ink: #fff7ed;
+  --pitch: #15803d;
+  --danger: #b91c1c;
+
+  --d-low: #15803d;
+  --d-moderate: #a16207;
+  --d-high: #c2410c;
+  --d-critical: #b91c1c;
+
+  --shadow: 0 1px 2px rgba(16, 32, 24, 0.08), 0 8px 24px rgba(16, 32, 24, 0.08);
+}
+
+@theme inline {
+  --color-base: var(--base);
+  --color-surface: var(--surface);
+  --color-panel: var(--panel);
+  --color-line: var(--line);
+  --color-ink: var(--ink);
+  --color-muted: var(--muted);
+  --color-accent: var(--accent);
+  --color-accent-ink: var(--accent-ink);
+  --color-pitch: var(--pitch);
+  --color-danger: var(--danger);
+  --font-sans: var(--font-sans), ui-sans-serif, system-ui, sans-serif;
+}
+
+body {
+  background: var(--base);
+  color: var(--ink);
+}
+
+/* Visible keyboard focus everywhere. */
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* Skip link: hidden until focused. */
+.skip-link {
+  position: fixed;
+  top: 0.5rem;
+  left: 0.5rem;
+  z-index: 100;
+  transform: translateY(-150%);
+  background: var(--accent);
+  color: var(--accent-ink);
+  padding: 0.5rem 0.875rem;
+  border-radius: 0.5rem;
+  font-weight: 600;
+  transition: transform 0.15s ease;
+}
+.skip-link:focus {
+  transform: translateY(0);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+}
