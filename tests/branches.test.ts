@@ -54,10 +54,10 @@ describe("rate limiter zero limit", () => {
 
 describe("clientIp with an empty forwarded segment", () => {
   it("falls back to x-real-ip when the first segment is blank", () => {
-    const req = new Request("http://x", {
-      headers: { "x-forwarded-for": ", 9.9.9.9", "x-real-ip": "8.8.8.8" },
+    const req = new Request("https://x", {
+      headers: { "x-forwarded-for": ", 203.0.113.9", "x-real-ip": "203.0.113.10" },
     });
-    expect(clientIp(req)).toBe("8.8.8.8");
+    expect(clientIp(req)).toBe("203.0.113.10");
   });
 });
 
@@ -82,7 +82,7 @@ describe("tool fallback branches", () => {
 
   it("getTransit with no filters returns every option", async () => {
     const result = await runTool<{ options: unknown[] }>(fanTools.getTransit, {});
-    expect(result.options.length).toBe(VENUE.transit.length);
+    expect(result.options).toHaveLength(VENUE.transit.length);
   });
 
   it("getRoute errors on an unknown origin", async () => {

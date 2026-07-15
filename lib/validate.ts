@@ -4,7 +4,7 @@ import { MATCH_WINDOW_MINUTES, MAX_CHAT_MESSAGES, SUPPORTED_LOCALES } from "./co
 
 /** Zod schemas for every API input. Parsing failures become 400 responses. */
 
-export const localeSchema = z.enum(SUPPORTED_LOCALES);
+const localeSchema = z.enum(SUPPORTED_LOCALES);
 
 /**
  * Structural envelope check for one chat message. The AI SDK owns the full
@@ -54,9 +54,3 @@ export const reportBodySchema = z.object({
 export const crowdQuerySchema = z.object({
   minute: z.coerce.number().min(0).max(MATCH_WINDOW_MINUTES).optional(),
 });
-
-export type ChatBody = z.infer<typeof chatBodySchema>;
-export type ActionBody = z.infer<typeof actionBodySchema>;
-export type AnnounceBody = z.infer<typeof announceBodySchema>;
-export type BriefingBody = z.infer<typeof briefingBodySchema>;
-export type ReportBody = z.infer<typeof reportBodySchema>;

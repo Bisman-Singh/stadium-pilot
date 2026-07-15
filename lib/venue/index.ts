@@ -5,7 +5,7 @@ import type { Zone } from "./types";
 
 export { VENUE };
 export * from "./types";
-export type { RouteResult, RouteStep, RouteOptions } from "./graph";
+export type { RouteResult, RouteOptions } from "./graph";
 export type { AmenityQuery, RankedAmenity } from "./amenities";
 export { getZone, resolveLocation } from "./locate";
 

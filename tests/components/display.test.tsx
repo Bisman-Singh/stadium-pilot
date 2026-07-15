@@ -31,7 +31,7 @@ describe("ZoneHeatGrid", () => {
     const table = getByRole("table");
     expect(table).toBeInTheDocument();
     // 12 data rows in the accessible table twin.
-    expect(getAllByRole("row").length).toBe(13); // 12 zones + header
+    expect(getAllByRole("row")).toHaveLength(13); // 12 zones + header
     expect(await axe(container)).toHaveNoViolations();
   });
 });

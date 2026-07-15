@@ -8,7 +8,7 @@ import { must } from "../must";
  * truth the AI narrates; the AI never computes paths itself.
  */
 
-export interface RouteStep {
+interface RouteStep {
   from: string;
   to: string;
   kind: EdgeKind;

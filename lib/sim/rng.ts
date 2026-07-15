@@ -5,7 +5,7 @@
  */
 
 /** FNV-1a hash of a string to an unsigned 32-bit integer. */
-export function hashString(input: string): number {
+function hashString(input: string): number {
   let hash = 2166136261;
   for (let i = 0; i < input.length; i++) {
     hash ^= input.charCodeAt(i);
@@ -15,7 +15,7 @@ export function hashString(input: string): number {
 }
 
 /** mulberry32: a compact, well-distributed seeded generator returning [0, 1). */
-export function mulberry32(seed: number): () => number {
+function mulberry32(seed: number): () => number {
   let state = seed >>> 0;
   return function next(): number {
     state = (state + 0x6d2b79f5) | 0;

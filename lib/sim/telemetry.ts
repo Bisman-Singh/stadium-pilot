@@ -9,21 +9,21 @@ import { noise } from "./rng";
  * an operations report. Derived entirely from the deterministic model.
  */
 
-export interface ZonePeak {
+interface ZonePeak {
   zoneId: string;
   name: string;
   peakDensity: number;
   peakMinute: number;
 }
 
-export interface IncidentDigest {
+interface IncidentDigest {
   kind: IncidentKind;
   severity: Severity;
   title: string;
   startMinute: number;
 }
 
-export interface Sustainability {
+interface Sustainability {
   waterRefills: number;
   wasteDivertedPct: number;
   recyclingStations: number;

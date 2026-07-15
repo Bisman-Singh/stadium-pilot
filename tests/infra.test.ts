@@ -69,8 +69,8 @@ function post(headers: Record<string, string>, body?: string): Request {
 
 describe("http helpers", () => {
   it("extracts the first forwarded client IP", () => {
-    expect(clientIp(post({ "x-forwarded-for": "1.2.3.4, 5.6.7.8" }))).toBe("1.2.3.4");
-    expect(clientIp(post({ "x-real-ip": "9.9.9.9" }))).toBe("9.9.9.9");
+    expect(clientIp(post({ "x-forwarded-for": "203.0.113.4, 203.0.113.8" }))).toBe("203.0.113.4");
+    expect(clientIp(post({ "x-real-ip": "203.0.113.9" }))).toBe("203.0.113.9");
     expect(clientIp(post({}))).toBe("anonymous");
   });
 

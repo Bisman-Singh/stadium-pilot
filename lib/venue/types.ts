@@ -6,7 +6,7 @@
 /** How two zones connect. `stairs` and `escalator` are excluded from step-free routes. */
 export type EdgeKind = "walkway" | "stairs" | "escalator" | "lift" | "ramp" | "gate";
 
-export interface ZoneEdge {
+interface ZoneEdge {
   to: string;
   kind: EdgeKind;
   metres: number;
@@ -51,14 +51,14 @@ export interface Amenity {
   note?: string;
 }
 
-export interface Gate {
+interface Gate {
   id: string;
   name: string;
   servesZones: string[];
   throughputPerMin: number;
 }
 
-export type SectionTier = "lower" | "upper" | "premium";
+type SectionTier = "lower" | "upper" | "premium";
 
 export interface Section {
   id: string;
@@ -66,9 +66,9 @@ export interface Section {
   tier: SectionTier;
 }
 
-export type TransitMode = "metro" | "shuttle" | "rideshare" | "parking";
+type TransitMode = "metro" | "shuttle" | "rideshare" | "parking";
 
-export interface TransitOption {
+interface TransitOption {
   id: string;
   mode: TransitMode;
   name: string;
@@ -78,7 +78,7 @@ export interface TransitOption {
   note: string;
 }
 
-export interface EventInfo {
+interface EventInfo {
   venueName: string;
   capacity: number;
   competition: string;

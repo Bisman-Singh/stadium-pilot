@@ -30,9 +30,8 @@ export function ZoneHeatGrid({ zones }: { zones: ZoneDensity[] }) {
             >
               <div className="flex items-baseline justify-between">
                 <span className="text-2xl font-bold tabular-nums">{pct}%</span>
-                <span className="text-xs font-semibold" style={{ color: `var(${meta.cssVar})` }}>
-                  {meta.label}
-                </span>
+                {/* Ink text keeps 4.5:1 on the tinted tile; the border carries the hue. */}
+                <span className="text-xs font-semibold text-ink">{meta.label}</span>
               </div>
               <div className="mt-1 text-sm text-ink">{zone.name}</div>
             </li>

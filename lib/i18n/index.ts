@@ -1,8 +1,8 @@
 import { RTL_LOCALES, SUPPORTED_LOCALES, type Locale } from "../constants";
 import { must } from "../must";
-import { TRANSLATIONS, type Dictionary, type DictKey } from "./translations";
+import { TRANSLATIONS, type Dictionary } from "./translations";
 
-export type { Dictionary, DictKey };
+export type { Dictionary };
 
 /** One flat dictionary per locale, materialised once from the keyed source. */
 function dictionaryFor(locale: Locale): Dictionary {

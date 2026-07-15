@@ -164,5 +164,5 @@ export const TRANSLATIONS = {
   },
 } satisfies Record<string, Record<Locale, string>>;
 
-export type DictKey = keyof typeof TRANSLATIONS;
+type DictKey = keyof typeof TRANSLATIONS;
 export type Dictionary = Record<DictKey, string>;

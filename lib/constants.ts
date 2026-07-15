@@ -26,7 +26,6 @@ export const DEMO_LOOP_SECONDS = 720; // one full cycle every 12 real minutes
 /** Crowd density is normalised 0..1. */
 export const DENSITY_ALERT = 0.85;
 export const DENSITY_WARN = 0.7;
-export const QUEUE_ALERT_MINUTES = 15;
 
 /** Walking model for route time estimates. */
 export const WALK_METRES_PER_MIN = 75;
@@ -41,7 +40,6 @@ export const CHAT_MAX_STEPS = 6;
 /** Request guards. */
 export const MAX_BODY_BYTES = 16_384;
 export const MAX_CHAT_MESSAGES = 40;
-export const MAX_MESSAGE_CHARS = 2_000;
 
 /** Per-IP rate limits: { limit, windowMs }. */
 export const RATE_LIMITS = {

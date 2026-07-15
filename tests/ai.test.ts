@@ -101,7 +101,7 @@ describe("fan tools ground answers in venue data", () => {
     const result = await runTool<{ phase: string; busiest: unknown[] }>(fanTools.getCrowd, {});
     expect(typeof result.phase).toBe("string");
     expect(Array.isArray(result.busiest)).toBe(true);
-    expect(result.busiest.length).toBe(3);
+    expect(result.busiest).toHaveLength(3);
   });
 });
 

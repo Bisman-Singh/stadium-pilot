@@ -90,9 +90,9 @@ describe("utility surface", () => {
   });
 
   it("treats a malformed Origin header as cross-origin", () => {
-    const req = new Request("http://x/api", {
+    const req = new Request("https://x/api", {
       method: "POST",
-      headers: { origin: "http://[not-a-valid-host", host: "x" },
+      headers: { origin: "https://[not-a-valid-host", host: "x" },
     });
     expect(isSameOrigin(req)).toBe(false);
   });
